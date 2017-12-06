@@ -51,4 +51,6 @@ def train(model,
                                            inner_iters=eval_inner_iters)
                 summary = sess.run(merged, feed_dict={accuracy_ph: correct/num_classes})
                 writer.add_summary(summary, i)
-            saver.save(sess, os.path.join(save_dir, 'model.ckpt'))
+                writer.flush()
+            if i % 100 == 0:
+                saver.save(sess, os.path.join(save_dir, 'model.ckpt'), global_step=i)

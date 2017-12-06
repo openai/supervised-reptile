@@ -126,7 +126,7 @@ def _sample_mini_dataset(dataset, num_classes, num_shots):
     """
     shuffled = list(dataset)
     random.shuffle(shuffled)
-    for class_idx, class_obj in enumerate(dataset[:num_classes]):
+    for class_idx, class_obj in enumerate(shuffled[:num_classes]):
         for sample in class_obj.sample(num_shots):
             yield (sample, class_idx)
 
