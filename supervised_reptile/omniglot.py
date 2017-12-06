@@ -60,7 +60,7 @@ def augment_dataset(dataset):
     """
     for character in dataset:
         for rotation in [0, 90, 180, 270]:
-            yield Character(character.data_dir, rotation=rotation)
+            yield Character(character.dir_path, rotation=rotation)
 
 # pylint: disable=R0903
 class Character:

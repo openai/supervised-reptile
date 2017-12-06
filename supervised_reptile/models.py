@@ -2,6 +2,7 @@
 Models for supervised meta-learning.
 """
 
+import numpy as np
 import tensorflow as tf
 
 # pylint: disable=R0903
@@ -16,6 +17,7 @@ class OmniglotModel:
             out = tf.layers.conv2d(out, 64, 3, strides=2, padding=padding)
             out = tf.layers.batch_normalization(out, training=True)
             out = tf.nn.relu(out)
+        out = tf.reshape(out, (-1, int(np.prod(out.get_shape()[1:]))))
         self.logits = tf.layers.dense(out, num_classes)
         self.label_ph = tf.placeholder(tf.int32, shape=(None,))
         self.loss = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=self.label_ph,

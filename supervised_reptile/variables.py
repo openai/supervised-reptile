@@ -30,10 +30,10 @@ class VariableState:
     def __init__(self, session, variables):
         self._session = session
         self._variables = variables
-        self._placeholders = [tf.placeholder(v.dtype, shape=v.get_shape())
+        self._placeholders = [tf.placeholder(v.dtype.base_dtype, shape=v.get_shape())
                               for v in variables]
         assigns = [tf.assign(v, p) for v, p in zip(self._variables, self._placeholders)]
-        self._assign_op = tf.group(assigns)
+        self._assign_op = tf.group(*assigns)
 
     def export_variables(self):
         """
@@ -45,4 +45,4 @@ class VariableState:
         """
         Restore the variables.
         """
-        self._session.run(self._assign_op, feed_dict=dict(zip(self._variables, values)))
+        self._session.run(self._assign_op, feed_dict=dict(zip(self._placeholders, values)))
