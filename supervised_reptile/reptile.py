@@ -25,12 +25,12 @@ class Reptile:
                    input_ph,
                    label_ph,
                    minimize_op,
-                   num_classes=5,
-                   num_shots=5,
-                   inner_batch_size=5,
-                   inner_iters=20,
-                   meta_step_size=0.1,
-                   meta_batch_size=1):
+                   num_classes,
+                   num_shots,
+                   inner_batch_size,
+                   inner_iters,
+                   meta_step_size,
+                   meta_batch_size):
         """
         Perform a Reptile training step.
 
@@ -67,10 +67,10 @@ class Reptile:
                  label_ph,
                  minimize_op,
                  predictions,
-                 num_classes=5,
-                 num_shots=5,
-                 inner_batch_size=5,
-                 inner_iters=50):
+                 num_classes,
+                 num_shots,
+                 inner_batch_size,
+                 inner_iters):
         """
         Run a single evaluation of the model.
 

@@ -1,5 +1,5 @@
 # Custom output files
-omniglot_out
+model_checkpoint
 data
 
 # Byte-compiled / optimized / DLL files
