@@ -25,11 +25,11 @@ def read_dataset(data_dir):
     The dataset is unaugmented and not split up into
     training and test sets.
     """
-    for alphabet_name in os.listdir(data_dir):
+    for alphabet_name in sorted(os.listdir(data_dir)):
         alphabet_dir = os.path.join(data_dir, alphabet_name)
         if not os.path.isdir(alphabet_dir):
             continue
-        for char_name in os.listdir(alphabet_dir):
+        for char_name in sorted(os.listdir(alphabet_dir)):
             if not char_name.startswith('character'):
                 continue
             yield Character(os.path.join(alphabet_dir, char_name), 0)

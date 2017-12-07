@@ -9,6 +9,9 @@ def argument_parser():
     Get an argument parser for a training script.
     """
     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser.add_argument('--pretrained', help='evaluate a pre-trained model',
+                        action='store_true', default=False)
+    parser.add_argument('--seed', help='random seed', default=0, type=int)
     parser.add_argument('--checkpoint', help='checkpoint directory', default='model_checkpoint')
     parser.add_argument('--classes', help='number of classes per inner task', default=5, type=int)
     parser.add_argument('--shots', help='number of examples per class', default=5, type=int)

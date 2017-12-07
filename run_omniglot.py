@@ -2,6 +2,8 @@
 Train a model on Omniglot.
 """
 
+import random
+
 import tensorflow as tf
 
 from supervised_reptile.args import argument_parser, train_kwargs, evaluate_kwargs
@@ -18,6 +20,7 @@ def main():
     Load data and train a model on it.
     """
     args = argument_parser().parse_args()
+    random.seed(args.seed)
 
     train_set, test_set = split_dataset(read_dataset(DATA_DIR))
     train_set = list(augment_dataset(train_set))
@@ -26,8 +29,12 @@ def main():
     model = OmniglotModel(args.classes)
 
     with tf.Session() as sess:
-        print('Training...')
-        train(sess, model, train_set, test_set, args.checkpoint, **train_kwargs(args))
+        if not args.pretrained:
+            print('Training...')
+            train(sess, model, train_set, test_set, args.checkpoint, **train_kwargs(args))
+        else:
+            print('Restoring from checkpoint...')
+            tf.train.Saver().restore(sess, tf.train.latest_checkpoint(args.checkpoint))
 
         print('Evaluating...')
         eval_kwargs = evaluate_kwargs(args)
