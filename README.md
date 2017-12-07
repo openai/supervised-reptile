@@ -35,3 +35,5 @@ Evaluating...
 Train accuracy: 0.7
 Test accuracy: 0.6
 ```
+
+The above command also creates a `model_checkpoint` with the saved model and some summaries about accuracy during training.

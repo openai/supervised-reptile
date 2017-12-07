@@ -53,5 +53,5 @@ def train(sess,
             summary = sess.run(merged, feed_dict={accuracy_ph: correct/num_classes})
             writer.add_summary(summary, i)
             writer.flush()
-        if i % 100 == 0:
+        if i % 100 == 0 or i == meta_iters-1:
             saver.save(sess, os.path.join(save_dir, 'model.ckpt'), global_step=i)
