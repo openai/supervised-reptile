@@ -110,7 +110,7 @@ class Reptile:
         num_correct = 0
         inputs, _ = zip(*train_set)
         inputs += tuple(s[0] for s in test_set)
-        predictions = self.session.run(predictions, feed_dict={input_ph: inputs})[:-num_classes]
+        predictions = self.session.run(predictions, feed_dict={input_ph: inputs})[-num_classes:]
         for test_sample, pred in zip(test_set, predictions):
             if pred == test_sample[1]:
                 num_correct += 1
