@@ -23,6 +23,7 @@ def train(sess,
           meta_iters=70000,
           eval_inner_batch_size=5,
           eval_inner_iters=50,
+          eval_interval=10,
           log_fn=print):
     """
     Train a model on a dataset.
@@ -44,14 +45,15 @@ def train(sess,
                            num_classes=num_classes, num_shots=num_shots,
                            inner_batch_size=inner_batch_size, inner_iters=inner_iters,
                            meta_step_size=meta_step_size, meta_batch_size=meta_batch_size)
-        for dataset, writer in [(train_set, train_writer), (test_set, test_writer)]:
-            correct = reptile.evaluate(dataset, model.input_ph, model.label_ph,
-                                       model.minimize_op, model.predictions,
-                                       num_classes=num_classes, num_shots=num_shots,
-                                       inner_batch_size=eval_inner_batch_size,
-                                       inner_iters=eval_inner_iters)
-            summary = sess.run(merged, feed_dict={accuracy_ph: correct/num_classes})
-            writer.add_summary(summary, i)
-            writer.flush()
+        if i % eval_interval == 0:
+            for dataset, writer in [(train_set, train_writer), (test_set, test_writer)]:
+                correct = reptile.evaluate(dataset, model.input_ph, model.label_ph,
+                                           model.minimize_op, model.predictions,
+                                           num_classes=num_classes, num_shots=num_shots,
+                                           inner_batch_size=eval_inner_batch_size,
+                                           inner_iters=eval_inner_iters)
+                summary = sess.run(merged, feed_dict={accuracy_ph: correct/num_classes})
+                writer.add_summary(summary, i)
+                writer.flush()
         if i % 100 == 0 or i == meta_iters-1:
             saver.save(sess, os.path.join(save_dir, 'model.ckpt'), global_step=i)

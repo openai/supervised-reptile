@@ -23,6 +23,7 @@ def argument_parser():
     parser.add_argument('--eval-batch', help='eval inner batch size', default=5, type=int)
     parser.add_argument('--eval-iters', help='eval inner iterations', default=50, type=int)
     parser.add_argument('--eval-samples', help='evaluation samples', default=10000, type=int)
+    parser.add_argument('--eval-interval', help='train steps per eval', default=10, type=int)
     return parser
 
 def train_kwargs(parsed_args):
@@ -40,6 +41,7 @@ def train_kwargs(parsed_args):
         'meta_iters': parsed_args.meta_iters,
         'eval_inner_batch_size': parsed_args.eval_batch,
         'eval_inner_iters': parsed_args.eval_iters,
+        'eval_interval': parsed_args.eval_interval,
     }
 
 def evaluate_kwargs(parsed_args):
