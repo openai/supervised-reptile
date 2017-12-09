@@ -4,7 +4,7 @@
 #
 
 OMNIGLOT_URL=https://raw.githubusercontent.com/brendenlake/omniglot/master/python
-IMAGENET_URL=http://www.image-net.org/download/synset?release=latest&src=stanford
+IMAGENET_URL="http://www.image-net.org/download/synset?release=latest&src=stanford"
 
 set -e
 
