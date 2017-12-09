@@ -44,9 +44,9 @@ if [ ! -d data/miniimagenet ]; then
         for wnid in $(cat "$list_file" | cut -f 1 -d / | sort -u); do
             mkdir "tmp/miniimagenet/$subset/$wnid"
             echo "Fetching wnid $wnid ..."
-            curl -s "${authed_url}&wnid=$wnid" >$wnid.tar
+            curl -s "${authed_url}&wnid=$wnid" >tmp/archive.tar
             mkdir "tmp/$wnid"
-            tar xf $wnid.tar -C "tmp/$wnid"
+            tar xf tmp/archive.tar -C "tmp/$wnid"
             for name in $(grep $wnid "$list_file"); do
                 mv "tmp/$name" "tmp/miniimagenet/$subset/$wnid"
             done
