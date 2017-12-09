@@ -15,7 +15,7 @@ if [ ! -d data ]; then
     mkdir data
 fi
 
-if false && [ ! -d data/omniglot ]; then
+if [ ! -d data/omniglot ]; then
     mkdir tmp/omniglot
     for name in images_background images_evaluation; do
         echo "Fetching omniglot/$name ..."
