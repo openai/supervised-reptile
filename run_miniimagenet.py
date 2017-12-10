@@ -8,11 +8,11 @@ import tensorflow as tf
 
 from supervised_reptile.args import argument_parser, train_kwargs, evaluate_kwargs
 from supervised_reptile.eval import evaluate
-from supervised_reptile.models import OmniglotModel
-from supervised_reptile.omniglot import read_dataset, split_dataset, augment_dataset
+from supervised_reptile.models import MiniImageNetModel
+from supervised_reptile.miniimagenet import read_dataset
 from supervised_reptile.train import train
 
-DATA_DIR = 'data/omniglot'
+DATA_DIR = 'data/miniimagenet'
 
 def main():
     """
@@ -21,11 +21,8 @@ def main():
     args = argument_parser().parse_args()
     random.seed(args.seed)
 
-    train_set, test_set = split_dataset(read_dataset(DATA_DIR))
-    train_set = list(augment_dataset(train_set))
-    test_set = list(test_set)
-
-    model = OmniglotModel(args.classes)
+    train_set, val_set, test_set = read_dataset(DATA_DIR)
+    model = MiniImageNetModel(args.classes)
 
     with tf.Session() as sess:
         if not args.pretrained:
@@ -38,6 +35,7 @@ def main():
         print('Evaluating...')
         eval_kwargs = evaluate_kwargs(args)
         print('Train accuracy: ' + str(evaluate(sess, model, train_set, **eval_kwargs)))
+        print('Validation accuracy: ' + str(evaluate(sess, model, val_set, **eval_kwargs)))
         print('Test accuracy: ' + str(evaluate(sess, model, test_set, **eval_kwargs)))
 
 if __name__ == '__main__':

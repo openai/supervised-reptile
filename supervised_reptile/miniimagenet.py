@@ -1,5 +1,10 @@
 """
 Loading and using the miniImageNet dataset.
+
+To use these APIs, you should prepare a directory that
+contains three sub-directories: train, test, and val.
+Each of these three directories should contain one
+sub-directory per WordNet ID.
 """
 
 import os
@@ -7,6 +12,26 @@ import random
 
 from PIL import Image
 import numpy as np
+
+def read_dataset(data_dir):
+    """
+    Read the miniImageNet dataset.
+
+    Args:
+      data_dir: directory containing miniImageNet.
+
+    Returns:
+      A tuple (train, val, test) of sequences of
+        ImageNetClass instances.
+    """
+    return tuple(_read_classes(os.path.join(data_dir, x)) for x in ['train', 'val', 'test'])
+
+def _read_classes(dir_path):
+    """
+    Read the WNID directories in a directory.
+    """
+    return [ImageNetClass(os.path.join(dir_path, f)) for f in os.listdir(dir_path)
+            if f.startswith('n')]
 
 # pylint: disable=R0903
 class ImageNetClass:
@@ -24,11 +49,11 @@ class ImageNetClass:
           A sequence of 84x84x3 numpy arrays.
           Each pixel ranges from 0 to 1.
         """
-        names = [f for f in os.listdir(self.dir_path) if f.endswith('.jpg')]
+        names = [f for f in os.listdir(self.dir_path) if f.endswith('.JPEG')]
         random.shuffle(names)
         images = []
         for name in names[:num_images]:
             with open(os.path.join(self.dir_path, name), 'rb') as in_file:
-                img = Image.open(in_file).resize((84, 84))
+                img = Image.open(in_file).resize((84, 84)).convert('RGB')
                 images.append(np.array(img).astype('float32') / 0xff)
         return images
