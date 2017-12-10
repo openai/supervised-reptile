@@ -19,7 +19,7 @@ def argument_parser():
     parser.add_argument('--inner-iters', help='inner iterations', default=20, type=int)
     parser.add_argument('--meta-step', help='meta-training step size', default=0.1, type=float)
     parser.add_argument('--meta-batch', help='meta-training batch size', default=1, type=int)
-    parser.add_argument('--meta-iters', help='meta-training iterations', default=70000, type=int)
+    parser.add_argument('--meta-iters', help='meta-training iterations', default=400000, type=int)
     parser.add_argument('--eval-batch', help='eval inner batch size', default=5, type=int)
     parser.add_argument('--eval-iters', help='eval inner iterations', default=50, type=int)
     parser.add_argument('--eval-samples', help='evaluation samples', default=10000, type=int)

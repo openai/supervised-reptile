@@ -4,7 +4,7 @@
 #
 
 OMNIGLOT_URL=https://raw.githubusercontent.com/brendenlake/omniglot/master/python
-IMAGENET_URL="http://www.image-net.org/challenges/LSVRC/2012/nnoupb/ILSVRC2012_img_train.tar"
+IMAGENET_URL=http://www.image-net.org/challenges/LSVRC/2012/nnoupb/ILSVRC2012_img_train.tar
 
 set -e
 
@@ -29,7 +29,7 @@ if [ ! -d data/omniglot ]; then
 fi
 
 if [ ! -d data/miniimagenet ]; then
-    mkdir "tmp/miniimagenet"
+    mkdir tmp/miniimagenet
     for subset in train test val; do
         mkdir "tmp/miniimagenet/$subset"
         echo "Fetching miniImageNet $subset set ..."
@@ -45,5 +45,5 @@ if [ ! -d data/miniimagenet ]; then
             wait
         done
     done
-    mv "tmp/miniimagenet" "data/miniimagenet"
+    mv tmp/miniimagenet data/miniimagenet
 fi
