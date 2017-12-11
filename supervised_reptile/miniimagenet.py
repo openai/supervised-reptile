@@ -40,6 +40,7 @@ class ImageNetClass:
     """
     def __init__(self, dir_path):
         self.dir_path = dir_path
+        self._cache = {}
 
     def sample(self, num_images):
         """
@@ -53,7 +54,13 @@ class ImageNetClass:
         random.shuffle(names)
         images = []
         for name in names[:num_images]:
-            with open(os.path.join(self.dir_path, name), 'rb') as in_file:
-                img = Image.open(in_file).resize((84, 84)).convert('RGB')
-                images.append(np.array(img).astype('float32') / 0xff)
+            images.append(self._read_image(name))
         return images
+
+    def _read_image(self, name):
+        if name in self._cache:
+            return self._cache[name].astype('float32') / 0xff
+        with open(os.path.join(self.dir_path, name), 'rb') as in_file:
+            img = Image.open(in_file).resize((84, 84)).convert('RGB')
+            self._cache[name] = np.array(img)
+            return self._read_image(name)
