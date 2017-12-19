@@ -3,6 +3,7 @@ Training helpers for supervised meta-learning.
 """
 
 import os
+import time
 
 import tensorflow as tf
 
@@ -24,6 +25,7 @@ def train(sess,
           eval_inner_batch_size=5,
           eval_inner_iters=50,
           eval_interval=10,
+          time_deadline=None,
           log_fn=print):
     """
     Train a model on a dataset.
@@ -57,3 +59,5 @@ def train(sess,
                 writer.flush()
         if i % 100 == 0 or i == meta_iters-1:
             saver.save(sess, os.path.join(save_dir, 'model.ckpt'), global_step=i)
+        if time_deadline is not None and time.time() > time_deadline:
+            break
