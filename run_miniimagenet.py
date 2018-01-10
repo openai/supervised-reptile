@@ -1,5 +1,5 @@
 """
-Train a model on Omniglot.
+Train a model on miniImageNet.
 """
 
 import random
