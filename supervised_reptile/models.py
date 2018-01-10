@@ -28,7 +28,7 @@ class OmniglotModel:
 # pylint: disable=R0903
 class MiniImageNetModel:
     """
-    A model for Omniglot classification.
+    A model for miniImageNet classification.
     """
     def __init__(self, num_classes, **adam_kwargs):
         self.input_ph = tf.placeholder(tf.float32, shape=(None, 84, 84, 3))
