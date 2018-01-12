@@ -70,6 +70,7 @@ class Character:
     def __init__(self, dir_path, rotation=0):
         self.dir_path = dir_path
         self.rotation = rotation
+        self._cache = {}
 
     def sample(self, num_images):
         """
@@ -83,7 +84,13 @@ class Character:
         random.shuffle(names)
         images = []
         for name in names[:num_images]:
-            with open(os.path.join(self.dir_path, name), 'rb') as in_file:
-                img = Image.open(in_file).resize((28, 28)).rotate(self.rotation)
-                images.append(np.array(img).astype('float32'))
+            images.append(self._read_image(os.path.join(self.dir_path, name)))
         return images
+
+    def _read_image(self, path):
+        if path in self._cache:
+            return self._cache[path]
+        with open(path, 'rb') as in_file:
+            img = Image.open(in_file).resize((28, 28)).rotate(self.rotation)
+            self._cache[path] = np.array(img).astype('float32')
+            return self._cache[path]
