@@ -26,6 +26,7 @@ def train(sess,
           eval_inner_iters=50,
           eval_interval=10,
           time_deadline=None,
+          train_shots=None,
           log_fn=print):
     """
     Train a model on a dataset.
@@ -44,7 +45,7 @@ def train(sess,
     for i in range(meta_iters):
         log_fn('batch %d' % i)
         reptile.train_step(train_set, model.input_ph, model.label_ph, model.minimize_op,
-                           num_classes=num_classes, num_shots=num_shots,
+                           num_classes=num_classes, num_shots=(train_shots or num_shots),
                            inner_batch_size=inner_batch_size, inner_iters=inner_iters,
                            meta_step_size=meta_step_size, meta_batch_size=meta_batch_size)
         if i % eval_interval == 0:

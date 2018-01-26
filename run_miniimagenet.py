@@ -22,7 +22,7 @@ def main():
     random.seed(args.seed)
 
     train_set, val_set, test_set = read_dataset(DATA_DIR)
-    model = MiniImageNetModel(args.classes)
+    model = MiniImageNetModel(args.classes, learning_rate=args.learning_rate)
 
     with tf.Session() as sess:
         if not args.pretrained:

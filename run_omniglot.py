@@ -25,7 +25,7 @@ def main():
     train_set = list(augment_dataset(train_set))
     test_set = list(test_set)
 
-    model = OmniglotModel(args.classes)
+    model = OmniglotModel(args.classes, learning_rate=args.learning_rate)
 
     with tf.Session() as sess:
         if not args.pretrained:
