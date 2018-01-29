@@ -47,7 +47,7 @@ class ImageNetClass:
         Sample images (as numpy arrays) from the class.
 
         Returns:
-          A sequence of 84x84x3 numpy arrays.
+          A sequence of 88x88x3 numpy arrays.
           Each pixel ranges from 0 to 1.
         """
         names = [f for f in os.listdir(self.dir_path) if f.endswith('.JPEG')]
@@ -61,6 +61,6 @@ class ImageNetClass:
         if name in self._cache:
             return self._cache[name].astype('float32') / 0xff
         with open(os.path.join(self.dir_path, name), 'rb') as in_file:
-            img = Image.open(in_file).resize((84, 84)).convert('RGB')
+            img = Image.open(in_file).resize((88, 88)).convert('RGB')
             self._cache[name] = np.array(img)
             return self._read_image(name)
