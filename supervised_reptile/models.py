@@ -61,8 +61,8 @@ class ResNetMiniImageNetModel:
             res = tf.nn.relu(res)
             res = tf.layers.conv2d(res, num_features, 3, padding='same')
             return tf.layers.batch_normalization(res, training=True)
-        out = tf.layers.conv2d(out, 64, 3, padding='same')
-        for i, num_features in enumerate([64, 128, 256, 512]):
+        out = tf.layers.conv2d(out, 32, 3, padding='same')
+        for i, num_features in enumerate([32, 64]):
             if i > 0:
                 # Project residual connections.
                 residual_value = tf.layers.conv2d(out, num_features, 1, strides=2, padding='same')
