@@ -20,6 +20,7 @@ def train(sess,
           inner_batch_size=5,
           inner_iters=20,
           meta_step_size=0.1,
+          meta_step_size_final=0.1,
           meta_batch_size=1,
           meta_iters=400000,
           eval_inner_batch_size=5,
@@ -44,10 +45,12 @@ def train(sess,
     sess.run(tf.global_variables_initializer())
     for i in range(meta_iters):
         log_fn('batch %d' % i)
+        frac_done = i / meta_iters
+        cur_meta_step_size = frac_done * meta_step_size_final + (1 - frac_done) * meta_step_size
         reptile.train_step(train_set, model.input_ph, model.label_ph, model.minimize_op,
                            num_classes=num_classes, num_shots=(train_shots or num_shots),
                            inner_batch_size=inner_batch_size, inner_iters=inner_iters,
-                           meta_step_size=meta_step_size, meta_batch_size=meta_batch_size)
+                           meta_step_size=cur_meta_step_size, meta_batch_size=meta_batch_size)
         if i % eval_interval == 0:
             for dataset, writer in [(train_set, train_writer), (test_set, test_writer)]:
                 correct = reptile.evaluate(dataset, model.input_ph, model.label_ph,
