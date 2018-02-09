@@ -28,6 +28,7 @@ def argument_parser():
     parser.add_argument('--eval-iters', help='eval inner iterations', default=50, type=int)
     parser.add_argument('--eval-samples', help='evaluation samples', default=10000, type=int)
     parser.add_argument('--eval-interval', help='train steps per eval', default=10, type=int)
+    parser.add_argument('--transductive', help='evaluate all samples at once', action='store_true')
     return parser
 
 def train_kwargs(parsed_args):
@@ -48,6 +49,7 @@ def train_kwargs(parsed_args):
         'eval_inner_batch_size': parsed_args.eval_batch,
         'eval_inner_iters': parsed_args.eval_iters,
         'eval_interval': parsed_args.eval_interval,
+        'transductive': parsed_args.transductive
     }
 
 def evaluate_kwargs(parsed_args):
@@ -60,5 +62,6 @@ def evaluate_kwargs(parsed_args):
         'num_shots': parsed_args.shots,
         'eval_inner_batch_size': parsed_args.eval_batch,
         'eval_inner_iters': parsed_args.eval_iters,
-        'num_samples': parsed_args.eval_samples
+        'num_samples': parsed_args.eval_samples,
+        'transductive': parsed_args.transductive
     }

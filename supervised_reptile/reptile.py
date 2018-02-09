@@ -12,12 +12,18 @@ from .variables import interpolate_vars, average_vars, VariableState
 class Reptile:
     """
     A meta-learning session.
+
+    Reptile can operate in two evaluation modes: normal
+    and transductive. In transductive mode, information is
+    allowed to leak between test samples via BatchNorm.
+    Typically, MAML is used in a transductive manner.
     """
-    def __init__(self, session, variables=None):
+    def __init__(self, session, variables=None, transductive=False):
         self.session = session
         self._model_state = VariableState(self.session, variables or tf.trainable_variables())
         self._full_state = VariableState(self.session,
                                          tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES))
+        self._transductive = transductive
 
     # pylint: disable=R0913,R0914
     def train_step(self,
@@ -107,15 +113,21 @@ class Reptile:
         for batch in _mini_batches(train_set, inner_batch_size, inner_iters):
             inputs, labels = zip(*batch)
             self.session.run(minimize_op, feed_dict={input_ph: inputs, label_ph: labels})
-        num_correct = 0
+        test_preds = self._run_predictions(train_set, test_set, input_ph, predictions)
+        num_correct = sum([pred == sample[1] for pred, sample in zip(test_preds, test_set)])
+        self._full_state.import_variables(old_vars)
+        return num_correct
+
+    def _run_predictions(self, train_set, test_set, input_ph, predictions):
+        if self._transductive:
+            inputs, _ = zip(*test_set)
+            return self.session.run(predictions, feed_dict={input_ph: inputs})
+        res = []
         for test_sample in test_set:
             inputs, _ = zip(*train_set)
             inputs += (test_sample[0],)
-            prediction = self.session.run(predictions, feed_dict={input_ph: inputs})[-1]
-            if prediction == test_sample[1]:
-                num_correct += 1
-        self._full_state.import_variables(old_vars)
-        return num_correct
+            res.append(self.session.run(predictions, feed_dict={input_ph: inputs})[-1])
+        return res
 
 def _sample_mini_dataset(dataset, num_classes, num_shots):
     """
