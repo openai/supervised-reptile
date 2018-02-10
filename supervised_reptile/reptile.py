@@ -113,12 +113,12 @@ class Reptile:
         for batch in _mini_batches(train_set, inner_batch_size, inner_iters):
             inputs, labels = zip(*batch)
             self.session.run(minimize_op, feed_dict={input_ph: inputs, label_ph: labels})
-        test_preds = self._run_predictions(train_set, test_set, input_ph, predictions)
+        test_preds = self._test_predictions(train_set, test_set, input_ph, predictions)
         num_correct = sum([pred == sample[1] for pred, sample in zip(test_preds, test_set)])
         self._full_state.import_variables(old_vars)
         return num_correct
 
-    def _run_predictions(self, train_set, test_set, input_ph, predictions):
+    def _test_predictions(self, train_set, test_set, input_ph, predictions):
         if self._transductive:
             inputs, _ = zip(*test_set)
             return self.session.run(predictions, feed_dict={input_ph: inputs})
