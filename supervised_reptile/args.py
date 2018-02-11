@@ -20,12 +20,15 @@ def argument_parser():
     parser.add_argument('--inner-iters', help='inner iterations', default=20, type=int)
     parser.add_argument('--learning-rate', help='Adam step size', default=1e-3, type=float)
     parser.add_argument('--meta-step', help='meta-training step size', default=0.1, type=float)
+    parser.add_argument('--meta-step-final', help='meta-training step size by the end',
+                        default=0.1, type=float)
     parser.add_argument('--meta-batch', help='meta-training batch size', default=1, type=int)
     parser.add_argument('--meta-iters', help='meta-training iterations', default=400000, type=int)
     parser.add_argument('--eval-batch', help='eval inner batch size', default=5, type=int)
     parser.add_argument('--eval-iters', help='eval inner iterations', default=50, type=int)
     parser.add_argument('--eval-samples', help='evaluation samples', default=10000, type=int)
     parser.add_argument('--eval-interval', help='train steps per eval', default=10, type=int)
+    parser.add_argument('--transductive', help='evaluate all samples at once', action='store_true')
     return parser
 
 def train_kwargs(parsed_args):
@@ -40,11 +43,13 @@ def train_kwargs(parsed_args):
         'inner_batch_size': parsed_args.inner_batch,
         'inner_iters': parsed_args.inner_iters,
         'meta_step_size': parsed_args.meta_step,
+        'meta_step_size_final': parsed_args.meta_step_final,
         'meta_batch_size': parsed_args.meta_batch,
         'meta_iters': parsed_args.meta_iters,
         'eval_inner_batch_size': parsed_args.eval_batch,
         'eval_inner_iters': parsed_args.eval_iters,
         'eval_interval': parsed_args.eval_interval,
+        'transductive': parsed_args.transductive
     }
 
 def evaluate_kwargs(parsed_args):
@@ -57,5 +62,6 @@ def evaluate_kwargs(parsed_args):
         'num_shots': parsed_args.shots,
         'eval_inner_batch_size': parsed_args.eval_batch,
         'eval_inner_iters': parsed_args.eval_iters,
-        'num_samples': parsed_args.eval_samples
+        'num_samples': parsed_args.eval_samples,
+        'transductive': parsed_args.transductive
     }
