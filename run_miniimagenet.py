@@ -6,7 +6,7 @@ import random
 
 import tensorflow as tf
 
-from supervised_reptile.args import argument_parser, train_kwargs, evaluate_kwargs
+from supervised_reptile.args import argument_parser, model_kwargs, train_kwargs, evaluate_kwargs
 from supervised_reptile.eval import evaluate
 from supervised_reptile.models import MiniImageNetModel
 from supervised_reptile.miniimagenet import read_dataset
@@ -22,7 +22,7 @@ def main():
     random.seed(args.seed)
 
     train_set, val_set, test_set = read_dataset(DATA_DIR)
-    model = MiniImageNetModel(args.classes, learning_rate=args.learning_rate)
+    model = MiniImageNetModel(args.classes, **model_kwargs(args))
 
     with tf.Session() as sess:
         if not args.pretrained:
