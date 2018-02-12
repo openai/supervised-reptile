@@ -9,10 +9,7 @@ def interpolate_vars(old_vars, new_vars, epsilon):
     """
     Interpolate between two sequences of variables.
     """
-    res = []
-    for old, new in zip(old_vars, new_vars):
-        res.append(old + epsilon * (new - old))
-    return res
+    return add_vars(old_vars, scale_vars(subtract_vars(new_vars, old_vars), epsilon))
 
 def average_vars(var_seqs):
     """
@@ -22,6 +19,24 @@ def average_vars(var_seqs):
     for variables in zip(*var_seqs):
         res.append(np.mean(variables, axis=0))
     return res
+
+def subtract_vars(var_seq_1, var_seq_2):
+    """
+    Subtract one variable sequence from another.
+    """
+    return [v1 - v2 for v1, v2 in zip(var_seq_1, var_seq_2)]
+
+def add_vars(var_seq_1, var_seq_2):
+    """
+    Add two variable sequences.
+    """
+    return [v1 + v2 for v1, v2 in zip(var_seq_1, var_seq_2)]
+
+def scale_vars(var_seq, scale):
+    """
+    Scale a variable sequence.
+    """
+    return [v * scale for v in var_seq]
 
 class VariableState:
     """
