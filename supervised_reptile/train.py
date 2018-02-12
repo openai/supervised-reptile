@@ -29,6 +29,7 @@ def train(sess,
           time_deadline=None,
           train_shots=None,
           transductive=False,
+          reptile_fn=Reptile,
           log_fn=print):
     """
     Train a model on a dataset.
@@ -36,7 +37,7 @@ def train(sess,
     if not os.path.exists(save_dir):
         os.mkdir(save_dir)
     saver = tf.train.Saver()
-    reptile = Reptile(sess, transductive=transductive)
+    reptile = reptile_fn(sess, transductive=transductive)
     accuracy_ph = tf.placeholder(tf.float32, shape=())
     tf.summary.scalar('accuracy', accuracy_ph)
     merged = tf.summary.merge_all()

@@ -13,11 +13,12 @@ def evaluate(sess,
              eval_inner_batch_size=5,
              eval_inner_iters=50,
              num_samples=10000,
-             transductive=False):
+             transductive=False,
+             reptile_fn=Reptile):
     """
     Evaluate a model on a dataset.
     """
-    reptile = Reptile(sess, transductive=transductive)
+    reptile = reptile_fn(sess, transductive=transductive)
     total_correct = 0
     for _ in range(num_samples):
         total_correct += reptile.evaluate(dataset, model.input_ph, model.label_ph,

@@ -7,7 +7,8 @@ import random
 
 import tensorflow as tf
 
-from .variables import interpolate_vars, average_vars, VariableState
+from .variables import (interpolate_vars, average_vars, subtract_vars, add_vars, scale_vars,
+                        VariableState)
 
 class Reptile:
     """
@@ -128,6 +129,39 @@ class Reptile:
             inputs += (test_sample[0],)
             res.append(self.session.run(predictions, feed_dict={input_ph: inputs})[-1])
         return res
+
+class FOML(Reptile):
+    """
+    A basic implementation of "first-order MAML" (FOML).
+
+    FOML is similar to Reptile, except that you use the
+    gradient from the last mini-batch as the update
+    direction.
+    """
+    # pylint: disable=R0913,R0914
+    def train_step(self,
+                   dataset,
+                   input_ph,
+                   label_ph,
+                   minimize_op,
+                   num_classes,
+                   num_shots,
+                   inner_batch_size,
+                   inner_iters,
+                   meta_step_size,
+                   meta_batch_size):
+        old_vars = self._model_state.export_variables()
+        updates = []
+        for _ in range(meta_batch_size):
+            mini_dataset = _sample_mini_dataset(dataset, num_classes, num_shots)
+            for batch in _mini_batches(mini_dataset, inner_batch_size, inner_iters):
+                inputs, labels = zip(*batch)
+                last_backup = self._model_state.export_variables()
+                self.session.run(minimize_op, feed_dict={input_ph: inputs, label_ph: labels})
+            updates.append(subtract_vars(self._model_state.export_variables(), last_backup))
+            self._model_state.import_variables(old_vars)
+        update = average_vars(updates)
+        self._model_state.import_variables(add_vars(old_vars, scale_vars(update, meta_step_size)))
 
 def _sample_mini_dataset(dataset, num_classes, num_shots):
     """

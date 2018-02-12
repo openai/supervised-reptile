@@ -4,6 +4,10 @@ Command-line argument parsing.
 
 import argparse
 
+import tensorflow as tf
+
+from .reptile import Reptile, FOML
+
 def argument_parser():
     """
     Get an argument parser for a training script.
@@ -29,7 +33,18 @@ def argument_parser():
     parser.add_argument('--eval-samples', help='evaluation samples', default=10000, type=int)
     parser.add_argument('--eval-interval', help='train steps per eval', default=10, type=int)
     parser.add_argument('--transductive', help='evaluate all samples at once', action='store_true')
+    parser.add_argument('--foml', help='use FOML instead of Reptile', action='store_true')
     return parser
+
+def model_kwargs(parsed_args):
+    """
+    Build the kwargs for model constructors from the
+    parsed command-line arguments.
+    """
+    res = {'learning_rate': parsed_args.learning_rate}
+    if parsed_args.foml:
+        res['optimizer'] = tf.train.GradientDescentOptimizer
+    return res
 
 def train_kwargs(parsed_args):
     """
@@ -49,7 +64,8 @@ def train_kwargs(parsed_args):
         'eval_inner_batch_size': parsed_args.eval_batch,
         'eval_inner_iters': parsed_args.eval_iters,
         'eval_interval': parsed_args.eval_interval,
-        'transductive': parsed_args.transductive
+        'transductive': parsed_args.transductive,
+        'reptile_fn': _args_reptile(parsed_args)
     }
 
 def evaluate_kwargs(parsed_args):
@@ -63,5 +79,11 @@ def evaluate_kwargs(parsed_args):
         'eval_inner_batch_size': parsed_args.eval_batch,
         'eval_inner_iters': parsed_args.eval_iters,
         'num_samples': parsed_args.eval_samples,
-        'transductive': parsed_args.transductive
+        'transductive': parsed_args.transductive,
+        'reptile_fn': _args_reptile(parsed_args)
     }
+
+def _args_reptile(parsed_args):
+    if parsed_args.foml:
+        return FOML
+    return Reptile
