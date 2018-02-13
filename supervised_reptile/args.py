@@ -34,6 +34,7 @@ def argument_parser():
     parser.add_argument('--eval-interval', help='train steps per eval', default=10, type=int)
     parser.add_argument('--transductive', help='evaluate all samples at once', action='store_true')
     parser.add_argument('--foml', help='use FOML instead of Reptile', action='store_true')
+    parser.add_argument('--sgd', help='use vanilla SGD instead of Adam', action='store_true')
     return parser
 
 def model_kwargs(parsed_args):
@@ -42,7 +43,7 @@ def model_kwargs(parsed_args):
     parsed command-line arguments.
     """
     res = {'learning_rate': parsed_args.learning_rate}
-    if parsed_args.foml:
+    if parsed_args.sgd:
         res['optimizer'] = tf.train.GradientDescentOptimizer
     return res
 
