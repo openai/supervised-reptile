@@ -60,12 +60,12 @@ def print_conv_case(inputs, outputs, upstream):
         sess.run(tf.global_variables_initializer())
         results = sess.run(tf.trainable_variables() + [inputs, outputs, upstream] + grads)
         kernel, inputs, outputs, upstream, input_grad, kernel_grad = results
-        print('var kernel = %s;' % _js_array(kernel))
-        print('var inputs = %s;' % _js_array(inputs))
-        print('var outputs = %s;' % _js_array(outputs))
-        print('var upstream = %s;' % _js_array(upstream))
-        print('var inputGrad = %s;' % _js_array(input_grad))
-        print('var kernelGrad = %s;' % _js_array(kernel_grad))
+        print('const kernel = %s;' % _js_array(kernel))
+        print('const inputs = %s;' % _js_array(inputs))
+        print('const outputs = %s;' % _js_array(outputs))
+        print('const upstream = %s;' % _js_array(upstream))
+        print('const inputGrad = %s;' % _js_array(input_grad))
+        print('const kernelGrad = %s;' % _js_array(kernel_grad))
 
 def _js_array(numpy_arr):
     return '[%s]' % ', '.join('%.6f' % x for x in numpy_arr.flatten())
