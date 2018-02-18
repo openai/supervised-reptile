@@ -1,5 +1,5 @@
 """
-Generate tensor variables for tests.js.
+Generate tensor variables for conv2d tests.
 """
 
 import tensorflow as tf
