@@ -1,11 +1,11 @@
 (function() {
 
     // conv2d performs a batched 2-D convolution with 3x3
-    // kernels and a stride of 2.
+    // kernels with "same"-style padding.
     //
     // Filters have the following shape:
     // [filter_height, filter_width, in_channels, out_channels].
-    function conv2d(input, filters, inRows, inCols, inChannels) {
+    function conv2d(input, filters, inRows, inCols, inChannels, stride) {
         var dataSize = inRows * inCols * inChannels;
         var batchSize = input.value.length / dataSize;
         var outChannels = filters.value.length / (inRows * inCols * inChannels);
@@ -15,8 +15,8 @@
         for (var i = 0; i < batchSize; ++i) {
             var image = Image(input.value.slice(dataSize*i, (dataSize+1)*i),
                               inRows, inCols, inChannels);
-            for (var j = -1; j + 3 <= inRows + 1; ++j) {
-                for (var k = -1; k + 3 <= inCols + 1; ++k) {
+            for (var j = -1; j + 3 <= inRows + 1; j += stride) {
+                for (var k = -1; k + 3 <= inCols + 1; k += stride) {
                     for (var l = 0; l < filterImages.length; ++l) {
                         results.push(convAtSpot(image, filterImages[l], j, k));
                     }
@@ -38,8 +38,8 @@
                     var imageGrad = Image(zeros(inRows * inCols * inChannels), inRows, inCols,
                                           inChannels);
                     var image = images[i];
-                    for (var j = -1; j + 3 <= inRows + 1; ++j) {
-                        for (var k = -1; k + 3 <= inCols + 1; ++k) {
+                    for (var j = -1; j + 3 <= inRows + 1; j += stride) {
+                        for (var k = -1; k + 3 <= inCols + 1; k += stride) {
                             for (var l = 0; l < filterImages.length; ++l) {
                                 convGradAtSpot(image, filterImages[l], j, k, filterGrads[l],
                                                imageGrad, outgrad[outgradIdx]);
