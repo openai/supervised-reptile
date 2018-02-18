@@ -223,6 +223,48 @@
         };
     }
 
+    function logSoftmax(input, numChannels) {
+        var inputs = input.value;
+        var batchSize = inputs.length / numChannels;
+        var result = [];
+        var logsumexps = [];
+        for (var i = 0; i < batchSize; ++i) {
+            var offset = i * numChannels;
+            var max = -Infinity;
+            for (var j = 0; j < numChannels; ++j) {
+                max = Math.max(max, inputs[offset + j]);
+            }
+            var expSum = 0;
+            for (var j = 0; j < numChannels; ++j) {
+                expSum += Math.exp(inputs[offset + j] - max);
+            }
+            var lse = Math.log(expSum) + max;
+            logsumexps.push(lse);
+            for (var j = 0; j < numChannels; ++j) {
+                result.push(inputs[offset + j] - lse);
+            }
+        }
+        return {
+            value: result,
+            backward: function(outgrad) {
+                var ingrad = zeros(inputs.length);
+                for (var i = 0; i < batchSize; ++i) {
+                    var offset = i * numChannels;
+                    var gradSum = 0;
+                    for (var j = 0; j < numChannels; ++j) {
+                        gradSum += outgrad[offset + j];
+                    }
+                    for (var j = 0; j < numChannels; ++j) {
+                        var normalizeGrad = Math.exp(inputs[offset + j] - logsumexps[i]);
+                        ingrad[offset + j] = 1 * outgrad[offset + j];
+                        ingrad[offset + j] -= normalizeGrad * gradSum;
+                    }
+                }
+                input.backward(ingrad);
+            }
+        };
+    }
+
     function zeros(length) {
         var res = [];
         for (var i = 0; i < length; ++i) {
@@ -243,6 +285,7 @@
         addChannels: addChannels,
         batchNorm: batchNorm,
         dense: dense,
+        logSoftmax: logSoftmax,
         zeros: zeros
     };
     if ('undefined' !== typeof window) {
