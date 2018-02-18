@@ -28,6 +28,7 @@
             }
             images.push(image);
         }
+
         return {
             value: results,
             backward: function(outgrad) {
@@ -87,8 +88,13 @@
         var sum = 0;
         for (var i = 0; i < filter.rows; ++i) {
             for (var j = 0; j < filter.cols; ++j) {
+                if (image.outOfBounds(row+i, col+j)) {
+                    continue;
+                }
+                var imageIdx = image.index(row+i, col+j, 0);
+                var filterIdx = filter.index(i, j, 0);
                 for (var k = 0; k < filter.depth; ++k) {
-                    sum += image.get(row+i, col+j, k) * filter.get(i, j, k);
+                    sum += image.data[imageIdx + k] * filter.data[filterIdx + k];
                 }
             }
         }
@@ -98,9 +104,14 @@
     function convGradAtSpot(image, filter, row, col, imageGrad, filterGrad, scale) {
         for (var i = 0; i < filter.rows; ++i) {
             for (var j = 0; j < filter.cols; ++j) {
+                if (image.outOfBounds(row+i, col+j)) {
+                    continue;
+                }
+                var imageIdx = image.index(row+i, col+j, 0);
+                var filterIdx = filter.index(i, j, 0);
                 for (var k = 0; k < filter.depth; ++k) {
-                    imageGrad.add(row+i, col+j, k, filter.get(i, j, k) * scale);
-                    filterGrad.add(i, j, k, image.get(row+i, col+j, k) * scale);
+                    imageGrad.data[imageIdx + k] += filter.data[filterIdx + k] * scale;
+                    filterGrad.data[filterIdx + k] += image.data[imageIdx + k] * scale;
                 }
             }
         }
