@@ -202,7 +202,8 @@
         channelMeans: channelMeans,
         scaleChannels: scaleChannels,
         addChannels: addChannels,
-        batchNorm: batchNorm
+        batchNorm: batchNorm,
+        zeros: zeros
     };
     if ('undefined' !== typeof window) {
         window.neuralnet = (window.neuralnet || {});
