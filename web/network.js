@@ -193,6 +193,7 @@
     }
 
     var exported = {
+        Variable: Variable,
         relu: relu,
         scale: scale,
         pool: pool,

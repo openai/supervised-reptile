@@ -8,21 +8,25 @@
     function conv2d(input, filters, inRows, inCols, inChannels, stride) {
         var dataSize = inRows * inCols * inChannels;
         var batchSize = input.value.length / dataSize;
-        var outChannels = filters.value.length / (inRows * inCols * inChannels);
-        var filterImages = splitFilters(input, 3, 3, outChannels);
+        var outChannels = filters.value.length / (3 * 3 * inChannels);
+        var filterImages = splitFilters(filters, 3, 3, outChannels);
         var results = [];
         var images = [];
+
+        var rowOff = (inRows - 1) % stride;
+        var colOff = (inCols - 1) % stride;
+
         for (var i = 0; i < batchSize; ++i) {
-            var image = Image(input.value.slice(dataSize*i, (dataSize+1)*i),
-                              inRows, inCols, inChannels);
+            var image = new Image(inRows, inCols, inChannels,
+                                  input.value.slice(dataSize*i, dataSize*(i+1)));
             for (var j = -1; j + 3 <= inRows + 1; j += stride) {
                 for (var k = -1; k + 3 <= inCols + 1; k += stride) {
                     for (var l = 0; l < filterImages.length; ++l) {
-                        results.push(convAtSpot(image, filterImages[l], j, k));
+                        results.push(convAtSpot(image, filterImages[l], j+rowOff, k+colOff));
                     }
                 }
             }
-            images.append(image);
+            images.push(image);
         }
         return {
             value: results,
@@ -31,24 +35,23 @@
                 var filterGrads = [];
                 for (var i = 0; i < filterImages.length; ++i) {
                     var img = filterImages[i];
-                    filterGrads.push(Image(zeros(img.data.length), img.rows, img.cols, img.depth));
+                    filterGrads.push(new Image(img.rows, img.cols, img.depth));
                 }
                 var outgradIdx = 0;
                 for (var i = 0; i < batchSize; ++i) {
-                    var imageGrad = Image(zeros(inRows * inCols * inChannels), inRows, inCols,
-                                          inChannels);
+                    var imageGrad = new Image(inRows, inCols, inChannels);
                     var image = images[i];
                     for (var j = -1; j + 3 <= inRows + 1; j += stride) {
                         for (var k = -1; k + 3 <= inCols + 1; k += stride) {
                             for (var l = 0; l < filterImages.length; ++l) {
-                                convGradAtSpot(image, filterImages[l], j, k, filterGrads[l],
-                                               imageGrad, outgrad[outgradIdx]);
+                                convGradAtSpot(image, filterImages[l], j+rowOff, k+colOff,
+                                    imageGrad, filterGrads[l], outgrad[outgradIdx]);
                                 ++outgradIdx;
                             }
                         }
                     }
                     for (var j = 0; j < imageGrad.data.length; ++j) {
-                        ingrad.append(imageGrad.data[j]);
+                        ingrad.push(imageGrad.data[j]);
                     }
                 }
                 input.backward(ingrad);
@@ -65,7 +68,7 @@
             for (var j = i; j < input.value.length; j += outChannels) {
                 filter.push(input.value[j]);
             }
-            filters.push(Image(filter, rows, cols, inChannels));
+            filters.push(new Image(rows, cols, inChannels, filter));
         }
         return filters;
     }
@@ -96,18 +99,28 @@
         for (var i = 0; i < filter.rows; ++i) {
             for (var j = 0; j < filter.cols; ++j) {
                 for (var k = 0; k < filter.depth; ++k) {
-                    imageGrad.add(row+i, col+j, k, filterGrad.get(i, j, k) * scale);
-                    filterGrad.add(i, j, k, imageGrad.get(row+i, col+j, k) * scale);
+                    imageGrad.add(row+i, col+j, k, filter.get(i, j, k) * scale);
+                    filterGrad.add(i, j, k, image.get(row+i, col+j, k) * scale);
                 }
             }
         }
     }
 
-    function Image(data, rows, cols, depth) {
-        this.data = data;
+    function Image(rows, cols, depth, data) {
         this.rows = rows;
         this.cols = cols;
         this.depth = depth;
+        if (data) {
+            this.data = data;
+        } else {
+            this.data = [];
+            for (var i = 0; i < rows * cols * depth; ++i) {
+                this.data.push(0);
+            }
+        }
+        if (this.data.length !== rows * cols * depth) {
+            throw Error('invalid data size');
+        }
     }
 
     Image.prototype.get = function(row, col, channel) {
