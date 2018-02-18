@@ -186,6 +186,43 @@
         });
     }
 
+    function dense(input, weights, numInputs, numOutputs) {
+        var inputs = input.value;
+        var weightVals = weights.value;
+        var batchSize = inputs.length / numInputs;
+        var result = [];
+        for (var i = 0; i < batchSize; ++i) {
+            var offset = i * numInputs;
+            for (var j = 0; j < numOutputs; ++j) {
+                var sum = 0;
+                for (var k = 0; k < numInputs; ++k) {
+                    sum += inputs[offset + k] * weightVals[k*numOutputs + j];
+                }
+                result.push(sum);
+            }
+        }
+        return {
+            value: result,
+            backward: function(outgrad) {
+                var weightGrad = zeros(weightVals.length);
+                var inputGrad = zeros(inputs.length);
+                var outgradIdx = 0;
+                for (var i = 0; i < batchSize; ++i) {
+                    var offset = i * numInputs;
+                    for (var j = 0; j < numOutputs; ++j) {
+                        var grad = outgrad[outgradIdx++];
+                        for (var k = 0; k < numInputs; ++k) {
+                            inputGrad[offset + k] += grad * weightVals[k*numOutputs + j];
+                            weightGrad[k*numOutputs + j] += grad * inputs[offset + k];
+                        }
+                    }
+                }
+                input.backward(inputGrad);
+                weights.backward(weightGrad);
+            }
+        };
+    }
+
     function zeros(length) {
         var res = [];
         for (var i = 0; i < length; ++i) {
@@ -205,6 +242,7 @@
         scaleChannels: scaleChannels,
         addChannels: addChannels,
         batchNorm: batchNorm,
+        dense: dense,
         zeros: zeros
     };
     if ('undefined' !== typeof window) {
