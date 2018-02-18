@@ -178,10 +178,12 @@
     }
 
     function batchNorm(input, scales, biases, numChannels) {
-        var centered = addChannels(input, scale(channelMeans(input, numChannels), -1));
-        var divisor = rsqrt(channelMeans(square(centered), numChannels), BATCHNORM_EPSILON);
-        var normalized = scaleChannels(centered, divisor);
-        return addChannels(scaleChannels(normalized, normalized), biases);
+        return pool(input, function(input) {
+            var centered = addChannels(input, scale(channelMeans(input, numChannels), -1));
+            var divisor = rsqrt(channelMeans(square(centered), numChannels), BATCHNORM_EPSILON);
+            var normalized = scaleChannels(centered, divisor);
+            return addChannels(scaleChannels(normalized, scales), biases);
+        });
     }
 
     function zeros(length) {
