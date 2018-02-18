@@ -184,16 +184,33 @@
         return addChannels(scaleChannels(normalized, normalized), biases);
     }
 
-    function conv2d(input, filters, inChannels) {
-        // TODO: this.
-    }
-
     function zeros(length) {
         var res = [];
         for (var i = 0; i < length; ++i) {
             res.push(0);
         }
         return res;
+    }
+
+    var exported = {
+        relu: relu,
+        scale: scale,
+        pool: pool,
+        rsqrt: rsqrt,
+        square: square,
+        channelMeans: channelMeans,
+        scaleChannels: scaleChannels,
+        addChannels: addChannels,
+        batchNorm: batchNorm
+    };
+    if ('undefined' !== typeof window) {
+        window.neuralnet = (window.neuralnet || {});
+        var keys = Object.keys(exported);
+        for (var i = 0; i < keys.length; ++i) {
+            window.neuralnet[keys[i]] = exported[keys[i]];
+        }
+    } else {
+        module.exports = exported;
     }
 
 })();
