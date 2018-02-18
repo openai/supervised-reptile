@@ -70,7 +70,8 @@ def print_conv_case(inputs, outputs, upstream):
 def _js_array(numpy_arr):
     return '[%s]' % ', '.join('%.6f' % x for x in numpy_arr.flatten())
 
-simple_conv_tests()
-unit_strided_conv_tests()
-simple_strided_conv_tests()
-complex_conv_tests()
+if __name__ == '__main__':
+    simple_conv_tests()
+    unit_strided_conv_tests()
+    simple_strided_conv_tests()
+    complex_conv_tests()

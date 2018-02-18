@@ -65,7 +65,7 @@
     }
 
     function pool(input, func) {
-        var poolVar = Variable(input.value);
+        var poolVar = new Variable(input.value);
         var result = func(poolVar);
         return {
             value: result.value,
@@ -88,7 +88,7 @@
             backward: function(outgrad) {
                 var ingrad = [];
                 for (var i = 0; i < inputs.length; ++i) {
-                    ingrad.push(outgrad[i] * Math.pow(inputs[i] + epsilon, -1.5));
+                    ingrad.push(outgrad[i] * -0.5 * Math.pow(inputs[i] + epsilon, -1.5));
                 }
                 input.backward(ingrad);
             }
@@ -119,7 +119,7 @@
         for (var i = 0; i < inputs.length; ++i) {
             result[i % numChannels] = (result[i % numChannels] || 0) + inputs[i];
         }
-        var scale = numChannels / input.length;
+        var scale = numChannels / inputs.length;
         for (var i = 0; i < result.length; ++i) {
             result[i] *= scale;
         }
@@ -167,7 +167,7 @@
         return {
             value: result,
             backward: function(outgrad) {
-                var biasGrad = zeros(inputs.length);
+                var biasGrad = zeros(biasVals.length);
                 for (var i = 0; i < inputs.length; ++i) {
                     biasGrad[i % biasVals.length] += outgrad[i];
                 }
@@ -177,12 +177,12 @@
         };
     }
 
-    function batchNorm(input, scales, biases, numChannels) {
+    function batchNorm(input, biases, numChannels) {
         return pool(input, function(input) {
             var centered = addChannels(input, scale(channelMeans(input, numChannels), -1));
             var divisor = rsqrt(channelMeans(square(centered), numChannels), BATCHNORM_EPSILON);
             var normalized = scaleChannels(centered, divisor);
-            return addChannels(scaleChannels(normalized, scales), biases);
+            return addChannels(normalized, biases);
         });
     }
 
