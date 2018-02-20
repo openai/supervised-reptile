@@ -95,7 +95,7 @@
         for (var i = 0; i < this._cells.length; ++i) {
             var data = this._cells[i].tensor(IMAGE_SIZE).data;
             for (var j = 0; j < data.length; ++j) {
-                joined.push(j);
+                joined.push(data[j]);
             }
         }
         this._evaluator.evaluate({data: joined, classes: NUM_CLASSES});
