@@ -9,7 +9,7 @@ self.onmessage = function(msg) {
     var size = Math.sqrt(tensorSize);
     var trainData = data.slice(0, tensorSize * classes);
 
-    var parameters = randomInit(classes);
+    var parameters = trainedInit();
     var images = new jsnet.Tensor([classes, size, size, 1], trainData);
     var losses = trainNetwork(parameters, images, NUM_STEPS);
 
@@ -75,8 +75,12 @@ function applyConv(inputs, parameters, i) {
     var kernel = parameters[0];
     var gamma = parameters[1];
     var beta = parameters[2];
-    // TODO: get the padding consistent with TF.
-    var output = jsnet.padImages(inputs, 1, 1, 1, 1);
+    var output = inputs;
+    if (output.value.shape[1] % 2 === 1) {
+        output = jsnet.padImages(inputs, 1, 1, 1, 1);
+    } else {
+        output = jsnet.padImages(inputs, 0, 1, 1, 0);
+    }
     output = jsnet.conv2d(output, kernel, 2, 2);
     output = jsnet.normalizeChannels(output);
     output = jsnet.mul(output, jsnet.broadcast(gamma, output.value.shape));
@@ -147,4 +151,19 @@ function randomInit(numClasses) {
     }
 
     return parameters;
+}
+
+function trainedInit() {
+    var result = [];
+
+    for (var i = 0; i < trainedParameters.length; i += 2) {
+        var param = new jsnet.Variable(trainedParameters[i].copy());
+        param.adamRate = trainedParameters[i + 1].copy();
+        for (var j = 0; j < param.adamRate.data.length; ++j) {
+            param.adamRate.data[j] = 1 / (Math.sqrt(param.adamRate.data[j]) + 1e-5);
+        }
+        result.push(param);
+    }
+
+    return result;
 }

@@ -7,6 +7,6 @@ for file in src/drawing.js src/evaluator.js src/predictions.js src/ui.js deps/js
     cat $file >>build/app.js
 done
 
-for file in src/webworker.js deps/jsnet.js; do
+for file in deps/jsnet.js deps/model.js src/webworker.js; do
     cat $file >>build/webworker.js
 done

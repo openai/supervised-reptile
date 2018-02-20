@@ -17,31 +17,30 @@ def main():
     OmniglotModel(args.classes, **model_kwargs(args))
 
     with tf.Session() as sess:
-        print('Restoring from checkpoint...')
+        print('var trainedParameters = [')
         tf.train.Saver().restore(sess, tf.train.latest_checkpoint(args.checkpoint))
         for conv_name in ['', '_1', '_2', '_3']:
             names = [x % conv_name for x in ['conv2d%s/kernel:0',
                                              'batch_normalization%s/gamma:0',
                                              'batch_normalization%s/beta:0']]
             for name in names:
-                #print_var(sess, name)
+                print_var(sess, name)
                 print_var(sess, name.replace(':0', '/Adam_1:0'))
-        #print_var(sess, 'dense/kernel:0')
+        print_var(sess, 'dense/kernel:0')
         print_var(sess, 'dense/kernel/Adam_1:0')
-        #print_var(sess, 'dense/bias:0')
-        print_var(sess, 'dense/bias/Adam_1:0')
+        print_var(sess, 'dense/bias:0')
+        print_var(sess, 'dense/bias/Adam_1:0', last=True)
+        print('];')
 
-def print_var(sess, name):
+def print_var(sess, name, last=False):
     """
     Print a variable as a jsnet Tensor.
     """
     var = [v for v in tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES) if v.name == name][0]
     val = sess.run(var)
-    import numpy as np
-    print(1/np.mean(np.sqrt(val)))
-    return
-    print('new jsnet.Tensor([%s], [%s]),' % (','.join(str(x) for x in val.shape),
-                                             ','.join(str(x) % x for x in val.flatten())))
+    print('    new jsnet.Tensor([%s], [%s])%s' % (','.join(str(x) for x in val.shape),
+                                                  ','.join(str(x) % x for x in val.flatten()),
+                                                  '' if last else ','))
 
 if __name__ == '__main__':
     main()
