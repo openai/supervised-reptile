@@ -3,7 +3,7 @@ if [ -d 'build' ]; then
 fi
 mkdir build
 
-for file in src/drawing.js src/evaluator.js src/ui.js deps/jsnet.js; do
+for file in src/drawing.js src/evaluator.js src/predictions.js src/ui.js deps/jsnet.js; do
     cat $file >>build/app.js
 done
 

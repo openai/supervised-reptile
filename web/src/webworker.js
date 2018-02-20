@@ -63,7 +63,10 @@ function applyNetwork(parameters, images) {
     for (var i = 0; i < 4; ++i) {
         output = applyConv(output, parameters.slice(i*3, (i+1)*3));
     }
-    output = jsnet.reshape(output, [output.value.shape[0], 256]);
+    output = jsnet.reshape(output, [
+        output.value.shape[0],
+        output.value.shape[1] * output.value.shape[2] * output.value.shape[3]
+    ]);
     output = applyDense(output, parameters.slice(12, 14));
     return jsnet.logSoftmax(output);
 }
@@ -91,26 +94,26 @@ function applyDense(inputs, parameters) {
 function randomInit(numClasses) {
     var parameters = [];
     for (var i = 0; i < 4; ++i) {
-        var inChans = [1, 64, 64, 64][i];
+        var inChans = [1, 24, 24, 24][i];
         var filters = [];
         var gamma = [];
         var beta = [];
-        for (var j = 0; j < inChans * 3 * 3 * 64; ++j) {
+        for (var j = 0; j < inChans * 3 * 3 * 24; ++j) {
             filters.push((Math.random() - 0.5) / 50);
         }
-        for (var j = 0; j < 64; ++j) {
+        for (var j = 0; j < 24; ++j) {
             gamma.push(1);
             beta.push(0);
         }
-        parameters.push(new jsnet.Variable(new jsnet.Tensor([3, 3, inChans, 64], filters)));
-        parameters.push(new jsnet.Variable(new jsnet.Tensor([64], gamma)));
-        parameters.push(new jsnet.Variable(new jsnet.Tensor([64], beta)));
+        parameters.push(new jsnet.Variable(new jsnet.Tensor([3, 3, inChans, 24], filters)));
+        parameters.push(new jsnet.Variable(new jsnet.Tensor([24], gamma)));
+        parameters.push(new jsnet.Variable(new jsnet.Tensor([24], beta)));
     }
     var weightMatrix = [];
-    for (var i = 0; i < 256 * numClasses; ++i) {
+    for (var i = 0; i < 96 * numClasses; ++i) {
         weightMatrix.push((Math.random() - 0.5) / 10);
     }
-    parameters.push(new jsnet.Variable(new jsnet.Tensor([256, numClasses], weightMatrix)));
+    parameters.push(new jsnet.Variable(new jsnet.Tensor([96, numClasses], weightMatrix)));
     var biases = [];
     for (var i = 0; i < numClasses; ++i) {
         biases.push(0);
