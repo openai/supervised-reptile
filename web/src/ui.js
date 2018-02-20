@@ -36,19 +36,27 @@
         controls.style.display = 'inline-block';
         controls.style.position = 'relative';
         var clearButton = document.createElement('button');
-        clearButton.style.position = 'absolute';
-        clearButton.style.width = '90%';
-        clearButton.style.height = '30%';
-        clearButton.style.top = '32.5%';
-        clearButton.style.left = '5%';
-        clearButton.style.border = 'none';
-        clearButton.style.backgroundColor = '#65bcd4';
-        clearButton.style.color = 'white';
-        clearButton.style.fontSize = '15px';
-        clearButton.style.cursor = 'pointer';
+        var clearAllButton = document.createElement('button');
+        for (var i = 0; i < 2; ++i) {
+            var button = [clearButton, clearAllButton][i];
+            button.style.position = 'absolute';
+            button.style.width = '90%';
+            button.style.height = '30%';
+            button.style.left = '5%';
+            button.style.border = 'none';
+            button.style.backgroundColor = '#65bcd4';
+            button.style.color = 'white';
+            button.style.fontSize = '15px';
+            button.style.cursor = 'pointer';
+        }
+        clearButton.style.top = '15%';
         clearButton.textContent = 'Clear';
         clearButton.addEventListener('click', this._clear.bind(this));
         controls.appendChild(clearButton);
+        clearAllButton.style.top = '55%';
+        clearAllButton.textContent = 'Clear All';
+        clearAllButton.addEventListener('click', this._clearAll.bind(this));
+        controls.appendChild(clearAllButton);
         this._testAndControls.appendChild(controls);
         this.element.appendChild(this._testAndControls);
 
@@ -60,6 +68,11 @@
     }
 
     UI.prototype._clear = function() {
+        this._cells[this._cells.length - 1].clear();
+        this._cellChanged();
+    };
+
+    UI.prototype._clearAll = function() {
         for (var i = 0; i < this._cells.length; ++i) {
             this._cells[i].clear();
         }
