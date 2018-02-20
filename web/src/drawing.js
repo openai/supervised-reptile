@@ -3,6 +3,7 @@
     var LABEL_SIZE = 20;
     var UPSAMPLE = 2;
     var LINE_WIDTH = 0.05;
+    var CENTERED_PAD = 0.2;
 
     function DrawingCell(label, size) {
         this.onChange = function() {};
@@ -57,7 +58,7 @@
         ctx.lineWidth = LINE_WIDTH * size;
         ctx.lineCap = 'square';
         ctx.lineJoin = 'square';
-        drawPaths(ctx, size, this._paths);
+        drawPaths(ctx, size, this._centeredPaths());
 
         var data = ctx.getImageData(0, 0, size, size).data;
         var grayscale = [];
@@ -118,6 +119,35 @@
         var rect = this._canvas.getBoundingClientRect();
         return [(e.clientX - rect.left) / this._canvas.offsetWidth,
             (e.clientY - rect.top) / this._canvas.offsetHeight];
+    };
+
+    DrawingCell.prototype._centeredPaths = function() {
+        var minX = Infinity, maxX = -Infinity;
+        var minY = Infinity, maxY = -Infinity;
+        for (var i = 0; i < this._paths.length; ++i) {
+            var path = this._paths[i];
+            for (var j = 0; j < path.length; ++j) {
+                var point = path[j];
+                minX = Math.min(minX, point[0]);
+                maxX = Math.max(maxX, point[0]);
+                minY = Math.min(minY, point[1]);
+                maxY = Math.max(maxY, point[1]);
+            }
+        }
+        var sideLength = Math.max(maxX-minX, maxY-minY) * (1 + CENTERED_PAD);
+        var topX = (maxX+minX)/2 - sideLength/2;
+        var topY = (maxY+minY)/2 - sideLength/2;
+        var result = [];
+        for (var i = 0; i < this._paths.length; ++i) {
+            var path = this._paths[i];
+            var newPath = [];
+            for (var j = 0; j < path.length; ++j) {
+                var point = path[j];
+                newPath.push([(point[0] - topX) / sideLength, (point[1] - topY) / sideLength]);
+            }
+            result.push(newPath);
+        }
+        return result;
     };
 
     function drawPaths(ctx, size, paths) {
