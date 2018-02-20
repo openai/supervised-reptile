@@ -3,38 +3,28 @@
     var EXTRA_SPACE = 90;
     var LABEL_WIDTH = 20;
 
-    function Predictions(classes, width) {
+    function Predictions(classes) {
         this.classes = classes;
-        this.width = width;
         this.element = document.createElement('div');
-        this.element.style.width = width + 'px';
-        this.element.style.textAlign = 'left';
-        this.element.style.display = 'inline-block';
+        this.element.className = 'few-shot-predictions';
 
         this._bars = [];
         this._percentLabels = [];
 
         for (var i = 0; i < classes; ++i) {
             var label = document.createElement('label');
-            label.style.display = 'inline-block';
-            label.style.width = LABEL_WIDTH + 'px';
+            label.className = 'few-shot-predictions-label';
             label.textContent = ['A', 'B', 'C', 'D', 'E'][i];
             var barContainer = document.createElement('div');
-            barContainer.style.backgroundColor = '#f0f0f0';
-            barContainer.style.width = (width - EXTRA_SPACE) + 'px';
-            barContainer.style.height = '5px';
-            barContainer.style.marginBottom = '3px';
-            barContainer.style.display = 'inline-block';
+            barContainer.className = 'few-shot-predictions-bar-container';
             var bar = document.createElement('div');
-            bar.style.backgroundColor = '#65bcd4';
-            bar.style.width = '0%';
-            bar.style.height = '100%';
+            bar.className = 'few-shot-predictions-bar';
             barContainer.appendChild(bar);
             var percentLabel = document.createElement('label');
-            percentLabel.style.marginLeft = '10px';
+            percentLabel.className = 'few-shot-predictions-percent-label';
 
             var row = document.createElement('div');
-            row.style.marginBottom = '5px';
+            row.className = 'few-shot-predictions-row';
             row.appendChild(label);
             row.appendChild(barContainer);
             row.appendChild(percentLabel);

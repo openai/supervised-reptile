@@ -11,48 +11,21 @@
         this.size = size;
 
         this.element = document.createElement('div');
-        this.element.style.backgroundColor = '#f0f0f0';
-        this.element.style.borderRadius = '3px';
-        this.element.style.position = 'relative';
-        this.element.style.width = size + 'px';
-        this.element.style.height = size + 'px';
-        this.element.style.overflow = 'hidden';
+        this.element.className = 'few-shot-cell';
 
         this._canvas = document.createElement('canvas');
-        this._canvas.position = 'absolute';
-        this._canvas.style.top = '0';
-        this._canvas.style.left = '0';
-        this._canvas.style.width = size + 'px';
-        this._canvas.style.height = size + 'px';
+        this._canvas.className = 'few-shot-cell-canvas';
         this._canvas.width = size * UPSAMPLE;
         this._canvas.height = size * UPSAMPLE;
         this.element.appendChild(this._canvas);
 
         this._label = document.createElement('label');
-        this._label.style.backgroundColor = '#5588c0';
-        this._label.style.color = 'white';
-        this._label.style.position = 'absolute';
-        this._label.style.top = '0';
-        this._label.style.left = '0';
-        this._label.style.width = LABEL_SIZE + 'px';
-        this._label.style.height = LABEL_SIZE + 'px';
-        this._label.style.lineHeight = LABEL_SIZE + 'px';
-        this._label.style.textAlign = 'center';
-        this._label.style.borderRadius = '3px 0';
+        this._label.className = 'few-shot-cell-label';
         this._label.textContent = label;
         this.element.appendChild(this._label);
 
         this._emptyLabel = document.createElement('label');
-        this._emptyLabel.style.position = 'absolute';
-        this._emptyLabel.style.top = '0';
-        this._emptyLabel.style.left = '0';
-        this._emptyLabel.style.width = size + 'px';
-        this._emptyLabel.style.height = size + 'px';
-        this._emptyLabel.style.color = '#999';
-        this._emptyLabel.style.fontSize = Math.floor(size / 6) + 'px';
-        this._emptyLabel.style.lineHeight = size + 'px';
-        this._emptyLabel.style.textAlign = 'center';
-        this._emptyLabel.style.pointerEvents = 'none';
+        this._emptyLabel.className = 'few-shot-cell-empty-label';
         this._emptyLabel.textContent = 'Draw Here';
         this.element.appendChild(this._emptyLabel);
 

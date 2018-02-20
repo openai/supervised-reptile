@@ -6,57 +6,43 @@
 
     function UI() {
         this.element = document.createElement('div');
-        this.element.style.textAlign = 'center';
+        this.element.className = 'few-shot-container';
 
         this._cells = [];
         this._evaluator = null;
-        this._predictions = new Predictions(NUM_CLASSES, 200);
+        this._predictions = new Predictions(NUM_CLASSES);
 
         this._trainElement = document.createElement('div');
-        this._trainElement.style.textAlign = 'center';
+        this._trainElement.className = 'few-shot-container-train-data';
         for (var i = 0; i < NUM_CLASSES; ++i) {
             var cell = new DrawingCell(['A', 'B', 'C', 'D', 'E'][i], CELL_SIZE);
-            cell.element.style.display = 'inline-block';
-            cell.element.style.margin = '3px';
             this._cells.push(cell);
             this._trainElement.appendChild(cell.element);
         }
         this.element.appendChild(this._trainElement);
 
         this._testAndControls = document.createElement('div');
-        this._testAndControls.style.textAlign = 'center';
-        this._testAndControls.style.marginBottom = '10px';
+        this._testAndControls.className = 'few-shot-container-test-and-controls';
+
         var testCell = new DrawingCell('?', CELL_SIZE);
-        testCell.element.style.display = 'inline-block';
         this._cells.push(testCell);
         this._testAndControls.appendChild(testCell.element);
+
         var controls = document.createElement('div');
-        controls.style.width = CELL_SIZE + 'px';
-        controls.style.height = CELL_SIZE + 'px';
-        controls.style.display = 'inline-block';
-        controls.style.position = 'relative';
+        controls.className = 'few-shot-container-controls';
+
         var clearButton = document.createElement('button');
-        var clearAllButton = document.createElement('button');
-        for (var i = 0; i < 2; ++i) {
-            var button = [clearButton, clearAllButton][i];
-            button.style.position = 'absolute';
-            button.style.width = '90%';
-            button.style.height = '30%';
-            button.style.left = '5%';
-            button.style.border = 'none';
-            button.style.backgroundColor = '#65bcd4';
-            button.style.color = 'white';
-            button.style.fontSize = '15px';
-            button.style.cursor = 'pointer';
-        }
-        clearButton.style.top = '15%';
+        clearButton.className = 'few-shot-container-clear';
         clearButton.textContent = 'Clear';
         clearButton.addEventListener('click', this._clear.bind(this));
         controls.appendChild(clearButton);
-        clearAllButton.style.top = '55%';
+
+        var clearAllButton = document.createElement('button');
+        clearAllButton.className = 'few-shot-container-clear-all';
         clearAllButton.textContent = 'Clear All';
         clearAllButton.addEventListener('click', this._clearAll.bind(this));
         controls.appendChild(clearAllButton);
+
         this._testAndControls.appendChild(controls);
         this.element.appendChild(this._testAndControls);
 
