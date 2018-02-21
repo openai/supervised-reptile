@@ -18,7 +18,7 @@ class OmniglotModel:
         self.input_ph = tf.placeholder(tf.float32, shape=(None, 28, 28))
         out = tf.reshape(self.input_ph, (-1, 28, 28, 1))
         for _ in range(4):
-            out = tf.layers.conv2d(out, 24, 3, strides=2, padding='same')
+            out = tf.layers.conv2d(out, 64, 3, strides=2, padding='same')
             out = tf.layers.batch_normalization(out, training=True)
             out = tf.nn.relu(out)
         out = tf.reshape(out, (-1, int(np.prod(out.get_shape()[1:]))))
