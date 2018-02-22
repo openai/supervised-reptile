@@ -112,13 +112,33 @@
     };
 
     DrawingCell.prototype._registerTouch = function() {
-        // TODO: this.
+        this._canvas.addEventListener('touchstart', function(e) {
+            e.preventDefault();
+            this._paths.push([this._touchPosition(e)]);
+        }.bind(this));
+        this._canvas.addEventListener('touchmove', function(e) {
+            e.preventDefault();
+            this._paths[this._paths.length - 1].push(this._touchPosition(e));
+            this._redraw();
+        }.bind(this));
+        var onEnd = function() {
+            this.onChange();
+        }.bind(this);
+        this._canvas.addEventListener('touchend', onEnd);
+        this._canvas.addEventListener('touchcancel', onEnd);
     };
 
     DrawingCell.prototype._mousePosition = function(e) {
         var rect = this._canvas.getBoundingClientRect();
         return [(e.clientX - rect.left) / this._canvas.offsetWidth,
             (e.clientY - rect.top) / this._canvas.offsetHeight];
+    };
+
+    DrawingCell.prototype._touchPosition = function(e) {
+        var rect = this._canvas.getBoundingClientRect();
+        var touch = e.changedTouches[0];
+        return [(touch.clientX - rect.left) / this._canvas.offsetWidth,
+            (touch.clientY - rect.top) / this._canvas.offsetHeight];
     };
 
     DrawingCell.prototype._centeredPaths = function() {
