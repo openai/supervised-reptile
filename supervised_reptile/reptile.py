@@ -19,12 +19,13 @@ class Reptile:
     allowed to leak between test samples via BatchNorm.
     Typically, MAML is used in a transductive manner.
     """
-    def __init__(self, session, variables=None, transductive=False):
+    def __init__(self, session, variables=None, transductive=False, pre_step_op=None):
         self.session = session
         self._model_state = VariableState(self.session, variables or tf.trainable_variables())
         self._full_state = VariableState(self.session,
                                          tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES))
         self._transductive = transductive
+        self._pre_step_op = pre_step_op
 
     # pylint: disable=R0913,R0914
     def train_step(self,
@@ -62,6 +63,8 @@ class Reptile:
             mini_dataset = _sample_mini_dataset(dataset, num_classes, num_shots)
             for batch in _mini_batches(mini_dataset, inner_batch_size, inner_iters):
                 inputs, labels = zip(*batch)
+                if self._pre_step_op:
+                    self.session.run(self._pre_step_op)
                 self.session.run(minimize_op, feed_dict={input_ph: inputs, label_ph: labels})
             new_vars.append(self._model_state.export_variables())
             self._model_state.import_variables(old_vars)
@@ -113,6 +116,8 @@ class Reptile:
         old_vars = self._full_state.export_variables()
         for batch in _mini_batches(train_set, inner_batch_size, inner_iters):
             inputs, labels = zip(*batch)
+            if self._pre_step_op:
+                self.session.run(self._pre_step_op)
             self.session.run(minimize_op, feed_dict={input_ph: inputs, label_ph: labels})
         test_preds = self._test_predictions(train_set, test_set, input_ph, predictions)
         num_correct = sum([pred == sample[1] for pred, sample in zip(test_preds, test_set)])
@@ -157,6 +162,8 @@ class FOML(Reptile):
             for batch in _mini_batches(mini_dataset, inner_batch_size, inner_iters):
                 inputs, labels = zip(*batch)
                 last_backup = self._model_state.export_variables()
+                if self._pre_step_op:
+                    self.session.run(self._pre_step_op)
                 self.session.run(minimize_op, feed_dict={input_ph: inputs, label_ph: labels})
             updates.append(subtract_vars(self._model_state.export_variables(), last_backup))
             self._model_state.import_variables(old_vars)

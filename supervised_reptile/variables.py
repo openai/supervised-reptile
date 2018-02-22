@@ -38,6 +38,15 @@ def scale_vars(var_seq, scale):
     """
     return [v * scale for v in var_seq]
 
+def weight_decay(rate, variables=None):
+    """
+    Create an Op that performs weight decay.
+    """
+    if variables is None:
+        variables = tf.trainable_variables()
+    ops = [tf.assign(var, var * rate) for var in variables]
+    return tf.group(*ops)
+
 class VariableState:
     """
     Manage the state of a set of variables.

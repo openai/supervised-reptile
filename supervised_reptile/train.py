@@ -8,6 +8,7 @@ import time
 import tensorflow as tf
 
 from .reptile import Reptile
+from .variables import weight_decay
 
 # pylint: disable=R0913,R0914
 def train(sess,
@@ -26,6 +27,7 @@ def train(sess,
           eval_inner_batch_size=5,
           eval_inner_iters=50,
           eval_interval=10,
+          weight_decay_rate=1,
           time_deadline=None,
           train_shots=None,
           transductive=False,
@@ -37,7 +39,9 @@ def train(sess,
     if not os.path.exists(save_dir):
         os.mkdir(save_dir)
     saver = tf.train.Saver()
-    reptile = reptile_fn(sess, transductive=transductive)
+    reptile = reptile_fn(sess,
+                         transductive=transductive,
+                         pre_step_op=weight_decay(weight_decay_rate))
     accuracy_ph = tf.placeholder(tf.float32, shape=())
     tf.summary.scalar('accuracy', accuracy_ph)
     merged = tf.summary.merge_all()
