@@ -68,11 +68,14 @@
     UI.prototype._cellChanged = function() {
         if (!this._hasEmptyCell()) {
             this._runNetwork();
+        } else {
+            this._predictions.setEnabled(false);
         }
     };
 
     UI.prototype._gotResult = function(obj) {
         console.log(obj);
+        this._predictions.setEnabled(true);
         this._predictions.setProbs(obj.probs);
     };
 

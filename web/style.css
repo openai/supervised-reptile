@@ -108,6 +108,10 @@ body {
     text-align: left;
 }
 
+.few-shot-predictions-disabled {
+    opacity: 0.5;
+}
+
 .few-shot-predictions-row {
     margin-bottom: 5px;
 }
@@ -136,4 +140,8 @@ body {
     width: 0%;
     height: 100%;
     background-color: #65bcd4;
+}
+
+.few-shot-predictions-disabled .few-shot-predictions-bar {
+    background-color: #707070;
 }

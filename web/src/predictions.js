@@ -35,6 +35,14 @@
         }
     }
 
+    Predictions.prototype.setEnabled = function(enabled) {
+        if (enabled) {
+            this.element.className = 'few-shot-predictions';
+        } else {
+            this.element.className = 'few-shot-predictions few-shot-predictions-disabled';
+        }
+    };
+
     Predictions.prototype.setProbs = function(probs) {
         for (var i = 0; i < this._bars.length; ++i) {
             this._bars[i].style.width = (probs[i] * 100).toFixed(2) + '%';
