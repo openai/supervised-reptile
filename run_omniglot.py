@@ -6,7 +6,7 @@ import random
 
 import tensorflow as tf
 
-from supervised_reptile.args import argument_parser, train_kwargs, evaluate_kwargs
+from supervised_reptile.args import argument_parser, model_kwargs, train_kwargs, evaluate_kwargs
 from supervised_reptile.eval import evaluate
 from supervised_reptile.models import OmniglotModel
 from supervised_reptile.omniglot import read_dataset, split_dataset, augment_dataset
@@ -25,7 +25,7 @@ def main():
     train_set = list(augment_dataset(train_set))
     test_set = list(test_set)
 
-    model = OmniglotModel(args.classes, learning_rate=args.learning_rate)
+    model = OmniglotModel(args.classes, **model_kwargs(args))
 
     with tf.Session() as sess:
         if not args.pretrained:

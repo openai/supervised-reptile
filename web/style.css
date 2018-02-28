@@ -1,0 +1,139 @@
+body {
+    font-family: sans-serif;
+    margin: 10px 0;
+}
+
+.few-shot-container {
+    width: 310px;
+    display: block;
+    margin: auto;
+}
+
+.few-shot-container-train-data {
+    text-align: center;
+}
+
+.few-shot-container-train-data .few-shot-cell:nth-child(2) {
+    margin: 0 4px;
+}
+
+.few-shot-container-test-and-controls {
+    width: 100%;
+    text-align: center;
+}
+
+.few-shot-container-controls {
+    position: relative;
+    display: inline-block;
+    height: 100px;
+    width: 100px;
+}
+
+.few-shot-container-controls button {
+    position: absolute;
+    width: 92px;
+    height: 30px;
+    left: 4px;
+
+    border: none;
+
+    background-color: #65bcd4;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.few-shot-container-clear {
+    top: 18px;
+}
+
+.few-shot-container-clear-all {
+    top: 52px;
+}
+
+.few-shot-cell {
+    display: inline-block;
+    position: relative;
+    width: 100px;
+    height: 100px;
+
+    background-color: #f0f0f0;
+    border-radius: 3px;
+}
+
+.few-shot-cell-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 20px;
+    height: 20px;
+
+    line-height: 20px;
+    text-align: center;
+    font-size: 16px;
+
+    background-color: #5588c0;
+    color: white;
+    border-radius: 3px 0;
+}
+
+.few-shot-cell-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.few-shot-cell-empty-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    line-height: 100px;
+    text-align: center;
+    font-size: 16px;
+
+    color: #999;
+
+    pointer-events: none;
+}
+
+.few-shot-predictions {
+    display: block;
+    width: 200px;
+    margin: 5px auto 0 auto;
+    text-align: left;
+}
+
+.few-shot-predictions-row {
+    margin-bottom: 5px;
+}
+
+.few-shot-predictions-label {
+    display: inline-block;
+    width: 20px;
+    font-size: 16px;
+}
+
+.few-shot-predictions-percent-label {
+    margin-left: 10px;
+}
+
+.few-shot-predictions-bar-container {
+    display: inline-block;
+
+    width: 110px;
+    height: 5px;
+    margin-bottom: 3px;
+
+    background-color: #f0f0f0;
+}
+
+.few-shot-predictions-bar {
+    width: 0%;
+    height: 100%;
+    background-color: #65bcd4;
+}

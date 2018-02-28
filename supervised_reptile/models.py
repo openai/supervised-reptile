@@ -2,15 +2,19 @@
 Models for supervised meta-learning.
 """
 
+from functools import partial
+
 import numpy as np
 import tensorflow as tf
+
+DEFAULT_OPTIMIZER = partial(tf.train.AdamOptimizer, beta1=0)
 
 # pylint: disable=R0903
 class OmniglotModel:
     """
     A model for Omniglot classification.
     """
-    def __init__(self, num_classes, **adam_kwargs):
+    def __init__(self, num_classes, optimizer=DEFAULT_OPTIMIZER, **optim_kwargs):
         self.input_ph = tf.placeholder(tf.float32, shape=(None, 28, 28))
         out = tf.reshape(self.input_ph, (-1, 28, 28, 1))
         for _ in range(4):
@@ -23,14 +27,14 @@ class OmniglotModel:
         self.loss = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=self.label_ph,
                                                                    logits=self.logits)
         self.predictions = tf.argmax(self.logits, axis=-1)
-        self.minimize_op = tf.train.AdamOptimizer(beta1=0, **adam_kwargs).minimize(self.loss)
+        self.minimize_op = optimizer(**optim_kwargs).minimize(self.loss)
 
 # pylint: disable=R0903
 class MiniImageNetModel:
     """
     A model for miniImageNet classification.
     """
-    def __init__(self, num_classes, **adam_kwargs):
+    def __init__(self, num_classes, optimizer=DEFAULT_OPTIMIZER, **optim_kwargs):
         self.input_ph = tf.placeholder(tf.float32, shape=(None, 84, 84, 3))
         out = self.input_ph
         for _ in range(4):
@@ -44,6 +48,7 @@ class MiniImageNetModel:
         self.loss = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=self.label_ph,
                                                                    logits=self.logits)
         self.predictions = tf.argmax(self.logits, axis=-1)
+<<<<<<< HEAD
         self.minimize_op = tf.train.AdamOptimizer(beta1=0, **adam_kwargs).minimize(self.loss)
 
 # pylint: disable=R0903
@@ -80,3 +85,6 @@ class ResNetMiniImageNetModel:
                                                                    logits=self.logits)
         self.predictions = tf.argmax(self.logits, axis=-1)
         self.minimize_op = tf.train.AdamOptimizer(beta1=0, **adam_kwargs).minimize(self.loss)
+=======
+        self.minimize_op = optimizer(**optim_kwargs).minimize(self.loss)
+>>>>>>> master

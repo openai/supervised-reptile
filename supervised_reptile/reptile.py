@@ -7,17 +7,25 @@ import random
 
 import tensorflow as tf
 
-from .variables import interpolate_vars, average_vars, VariableState
+from .variables import (interpolate_vars, average_vars, subtract_vars, add_vars, scale_vars,
+                        VariableState)
 
 class Reptile:
     """
     A meta-learning session.
+
+    Reptile can operate in two evaluation modes: normal
+    and transductive. In transductive mode, information is
+    allowed to leak between test samples via BatchNorm.
+    Typically, MAML is used in a transductive manner.
     """
-    def __init__(self, session, variables=None):
+    def __init__(self, session, variables=None, transductive=False, pre_step_op=None):
         self.session = session
         self._model_state = VariableState(self.session, variables or tf.trainable_variables())
         self._full_state = VariableState(self.session,
                                          tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES))
+        self._transductive = transductive
+        self._pre_step_op = pre_step_op
 
     # pylint: disable=R0913,R0914
     def train_step(self,
@@ -55,6 +63,8 @@ class Reptile:
             mini_dataset = _sample_mini_dataset(dataset, num_classes, num_shots)
             for batch in _mini_batches(mini_dataset, inner_batch_size, inner_iters):
                 inputs, labels = zip(*batch)
+                if self._pre_step_op:
+                    self.session.run(self._pre_step_op)
                 self.session.run(minimize_op, feed_dict={input_ph: inputs, label_ph: labels})
             new_vars.append(self._model_state.export_variables())
             self._model_state.import_variables(old_vars)
@@ -106,16 +116,59 @@ class Reptile:
         old_vars = self._full_state.export_variables()
         for batch in _mini_batches(train_set, inner_batch_size, inner_iters):
             inputs, labels = zip(*batch)
+            if self._pre_step_op:
+                self.session.run(self._pre_step_op)
             self.session.run(minimize_op, feed_dict={input_ph: inputs, label_ph: labels})
-        num_correct = 0
+        test_preds = self._test_predictions(train_set, test_set, input_ph, predictions)
+        num_correct = sum([pred == sample[1] for pred, sample in zip(test_preds, test_set)])
+        self._full_state.import_variables(old_vars)
+        return num_correct
+
+    def _test_predictions(self, train_set, test_set, input_ph, predictions):
+        if self._transductive:
+            inputs, _ = zip(*test_set)
+            return self.session.run(predictions, feed_dict={input_ph: inputs})
+        res = []
         for test_sample in test_set:
             inputs, _ = zip(*train_set)
             inputs += (test_sample[0],)
-            prediction = self.session.run(predictions, feed_dict={input_ph: inputs})[-1]
-            if prediction == test_sample[1]:
-                num_correct += 1
-        self._full_state.import_variables(old_vars)
-        return num_correct
+            res.append(self.session.run(predictions, feed_dict={input_ph: inputs})[-1])
+        return res
+
+class FOML(Reptile):
+    """
+    A basic implementation of "first-order MAML" (FOML).
+
+    FOML is similar to Reptile, except that you use the
+    gradient from the last mini-batch as the update
+    direction.
+    """
+    # pylint: disable=R0913,R0914
+    def train_step(self,
+                   dataset,
+                   input_ph,
+                   label_ph,
+                   minimize_op,
+                   num_classes,
+                   num_shots,
+                   inner_batch_size,
+                   inner_iters,
+                   meta_step_size,
+                   meta_batch_size):
+        old_vars = self._model_state.export_variables()
+        updates = []
+        for _ in range(meta_batch_size):
+            mini_dataset = _sample_mini_dataset(dataset, num_classes, num_shots)
+            for batch in _mini_batches(mini_dataset, inner_batch_size, inner_iters):
+                inputs, labels = zip(*batch)
+                last_backup = self._model_state.export_variables()
+                if self._pre_step_op:
+                    self.session.run(self._pre_step_op)
+                self.session.run(minimize_op, feed_dict={input_ph: inputs, label_ph: labels})
+            updates.append(subtract_vars(self._model_state.export_variables(), last_backup))
+            self._model_state.import_variables(old_vars)
+        update = average_vars(updates)
+        self._model_state.import_variables(add_vars(old_vars, scale_vars(update, meta_step_size)))
 
 def _sample_mini_dataset(dataset, num_classes, num_shots):
     """
