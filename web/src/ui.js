@@ -51,7 +51,16 @@
         }
 
         this.element.appendChild(this._predictions.element);
+
+        this._loadDefault();
     }
+
+    UI.prototype._loadDefault = function() {
+        for (var i = 0; i < this._cells.length; ++i) {
+            this._cells[i].setPaths(DEFAULT_PATHS[i]);
+        }
+        this._predictions.setProbs(DEFAULT_PROBS);
+    };
 
     UI.prototype._clear = function() {
         this._cells[this._cells.length - 1].clear();

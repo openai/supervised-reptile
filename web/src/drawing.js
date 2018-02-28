@@ -39,13 +39,17 @@
         }
     }
 
+    DrawingCell.prototype.setPaths = function(paths) {
+        this._paths = paths;
+        this._redraw();
+    };
+
     DrawingCell.prototype.empty = function() {
         return this._paths.length === 0;
     };
 
     DrawingCell.prototype.clear = function() {
-        this._paths = [];
-        this._redraw();
+        this.setPaths([]);
     };
 
     DrawingCell.prototype.tensor = function(size) {
