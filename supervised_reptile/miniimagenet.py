@@ -1,5 +1,5 @@
 """
-Loading and using the miniImageNet dataset.
+Loading and using the Mini-ImageNet dataset.
 
 To use these APIs, you should prepare a directory that
 contains three sub-directories: train, test, and val.

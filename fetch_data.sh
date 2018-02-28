@@ -32,7 +32,7 @@ if [ ! -d data/miniimagenet ]; then
     mkdir tmp/miniimagenet
     for subset in train test val; do
         mkdir "tmp/miniimagenet/$subset"
-        echo "Fetching miniImageNet $subset set ..."
+        echo "Fetching Mini-ImageNet $subset set ..."
         for csv in $(ls metadata/miniimagenet/$subset); do
             echo "Fetching wnid: ${csv%.csv}"
             dst_dir="tmp/miniimagenet/$subset/${csv%.csv}"
