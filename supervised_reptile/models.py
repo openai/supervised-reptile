@@ -48,8 +48,7 @@ class MiniImageNetModel:
         self.loss = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=self.label_ph,
                                                                    logits=self.logits)
         self.predictions = tf.argmax(self.logits, axis=-1)
-<<<<<<< HEAD
-        self.minimize_op = tf.train.AdamOptimizer(beta1=0, **adam_kwargs).minimize(self.loss)
+        self.minimize_op = optimizer(**optim_kwargs).minimize(self.loss)
 
 # pylint: disable=R0903
 class ResNetMiniImageNetModel:
@@ -57,7 +56,7 @@ class ResNetMiniImageNetModel:
     A model for miniImageNet classification based on
     a simplified ResNet-18.
     """
-    def __init__(self, num_classes, **adam_kwargs):
+    def __init__(self, num_classes, optimizer=DEFAULT_OPTIMIZER, **optim_kwargs):
         self.input_ph = tf.placeholder(tf.float32, shape=(None, 88, 88, 3))
         out = self.input_ph
         def _single_block(inputs, num_features, stride=1):
@@ -84,7 +83,4 @@ class ResNetMiniImageNetModel:
         self.loss = tf.nn.sparse_softmax_cross_entropy_with_logits(labels=self.label_ph,
                                                                    logits=self.logits)
         self.predictions = tf.argmax(self.logits, axis=-1)
-        self.minimize_op = tf.train.AdamOptimizer(beta1=0, **adam_kwargs).minimize(self.loss)
-=======
         self.minimize_op = optimizer(**optim_kwargs).minimize(self.loss)
->>>>>>> master
