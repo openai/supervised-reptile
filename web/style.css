@@ -1,8 +1,3 @@
-body {
-    font-family: sans-serif;
-    margin: 10px 0;
-}
-
 .few-shot-container {
     width: 310px;
     display: block;
@@ -30,17 +25,22 @@ body {
 }
 
 .few-shot-container-controls button {
-    position: absolute;
-    width: 92px;
-    height: 30px;
-    left: 4px;
+    position: absolute !important;
+    width: 92px !important;
+    height: 30px !important;
+    left: 4px !important;
+    min-height: 0 !important;
 
-    border: none;
+    border: none !important;
 
-    background-color: #65bcd4;
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
+    background-color: #65bcd4 !important;
+    color: white !important;
+    font-size: 16px !important;
+    cursor: pointer !important;
+
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+    border-radius: none !important;
 }
 
 .few-shot-container-clear {
@@ -124,6 +124,7 @@ body {
 
 .few-shot-predictions-percent-label {
     margin-left: 10px;
+    font-size: 16px;
 }
 
 .few-shot-predictions-bar-container {

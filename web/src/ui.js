@@ -113,4 +113,8 @@
 
     window.UI = UI;
 
+    window.onload = function() {
+        new UI();
+    };
+
 })();
