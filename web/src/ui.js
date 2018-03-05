@@ -5,8 +5,7 @@
     IMAGE_SIZE = 28;
 
     function UI() {
-        this.element = document.createElement('div');
-        this.element.className = 'few-shot-container';
+        this.element = document.getElementsByClassName('few-shot-container')[0];
 
         this._cells = [];
         this._evaluator = null;
