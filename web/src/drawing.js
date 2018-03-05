@@ -3,7 +3,7 @@
     var LABEL_SIZE = 20;
     var UPSAMPLE = 2;
     var LINE_WIDTH = 0.05;
-    var CENTERED_PAD = 0.2;
+    var CENTERED_PAD = 0.9;
 
     function DrawingCell(label, size) {
         this.onChange = function() {};
