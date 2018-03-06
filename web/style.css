@@ -146,7 +146,7 @@
 }
 
 .few-shot-predictions-disabled {
-    opacity: 0.5;
+    visibility: hidden;
 }
 
 .few-shot-predictions-row {
