@@ -9,50 +9,58 @@
 
         this._cells = [];
         this._evaluator = null;
-        this._predictions = new Predictions(NUM_CLASSES);
 
-        this._trainElement = document.createElement('div');
-        this._trainElement.className = 'few-shot-container-train-data';
-        for (var i = 0; i < NUM_CLASSES; ++i) {
-            var cell = new DrawingCell(['A', 'B', 'C', 'D', 'E'][i], CELL_SIZE);
-            this._cells.push(cell);
-            this._trainElement.appendChild(cell.element);
-        }
-        this.element.appendChild(this._trainElement);
-
-        this._testAndControls = document.createElement('div');
-        this._testAndControls.className = 'few-shot-container-test-and-controls';
-
-        var testCell = new DrawingCell('?', CELL_SIZE);
-        this._cells.push(testCell);
-        this._testAndControls.appendChild(testCell.element);
-
-        var controls = document.createElement('div');
-        controls.className = 'few-shot-container-controls';
-
-        var clearButton = document.createElement('button');
-        clearButton.className = 'few-shot-container-clear';
-        clearButton.textContent = 'Clear';
-        clearButton.addEventListener('click', this._clear.bind(this));
-        controls.appendChild(clearButton);
-
-        var clearAllButton = document.createElement('button');
-        clearAllButton.className = 'few-shot-container-clear-all';
-        clearAllButton.textContent = 'Clear All';
-        clearAllButton.addEventListener('click', this._clearAll.bind(this));
-        controls.appendChild(clearAllButton);
-
-        this._testAndControls.appendChild(controls);
-        this.element.appendChild(this._testAndControls);
+        this._setupTrainElement();
+        this.element.appendChild(createSeparator());
+        this._setupTestElement();
 
         for (var i = 0; i < this._cells.length; ++i) {
             this._cells[i].onChange = this._cellChanged.bind(this);
         }
 
-        this.element.appendChild(this._predictions.element);
-
         this._loadDefault();
     }
+
+    UI.prototype._setupTrainElement = function() {
+        this._trainElement = document.createElement('div');
+        this._trainElement.className = 'few-shot-container-train-data';
+        this._trainElement.appendChild(createSectionHeading('Training Data'));
+
+        for (var i = 0; i < NUM_CLASSES; ++i) {
+            var cell = new DrawingCell(CELL_SIZE);
+            this._cells.push(cell);
+            this._trainElement.appendChild(cell.element);
+        }
+
+        this._predictions = new Predictions(NUM_CLASSES);
+        this._trainElement.appendChild(this._predictions.element);
+
+        var clearAllButton = document.createElement('button');
+        clearAllButton.className = 'few-shot-container-clear-all';
+        clearAllButton.textContent = 'Erase All';
+        clearAllButton.addEventListener('click', this._clearAll.bind(this));
+        this._trainElement.appendChild(clearAllButton);
+
+        this.element.appendChild(this._trainElement);
+    };
+
+    UI.prototype._setupTestElement = function() {
+        this._testElement = document.createElement('div');
+        this._testElement.className = 'few-shot-container-test-data';
+        this._testElement.appendChild(createSectionHeading('Input'));
+
+        var testCell = new DrawingCell(CELL_SIZE);
+        this._cells.push(testCell);
+        this._testElement.appendChild(testCell.element);
+
+        var clearButton = document.createElement('button');
+        clearButton.className = 'few-shot-container-clear';
+        clearButton.textContent = 'Erase';
+        clearButton.addEventListener('click', this._clear.bind(this));
+        this._testElement.appendChild(clearButton);
+
+        this.element.appendChild(this._testElement);
+    };
 
     UI.prototype._loadDefault = function() {
         for (var i = 0; i < this._cells.length; ++i) {
@@ -67,7 +75,7 @@
     };
 
     UI.prototype._clearAll = function() {
-        for (var i = 0; i < this._cells.length; ++i) {
+        for (var i = 0; i < this._cells.length - 1; ++i) {
             this._cells[i].clear();
         }
         this._cellChanged();
@@ -116,5 +124,18 @@
     window.onload = function() {
         new UI();
     };
+
+    function createSectionHeading(title) {
+        var heading = document.createElement('label');
+        heading.className = 'few-shot-section-heading';
+        heading.textContent = title;
+        return heading;
+    }
+
+    function createSeparator() {
+        var separator = document.createElement('div');
+        separator.className = 'few-shot-separator';
+        return separator;
+    }
 
 })();

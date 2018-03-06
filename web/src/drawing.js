@@ -5,10 +5,9 @@
     var LINE_WIDTH = 0.05;
     var CENTERED_PAD = 0.9;
 
-    function DrawingCell(label, size) {
+    function DrawingCell(size) {
         this.onChange = function() {};
 
-        this.label = label;
         this.size = size;
 
         this.element = document.createElement('div');
@@ -19,11 +18,6 @@
         this._canvas.width = size * UPSAMPLE;
         this._canvas.height = size * UPSAMPLE;
         this.element.appendChild(this._canvas);
-
-        this._label = document.createElement('label');
-        this._label.className = 'few-shot-cell-label';
-        this._label.textContent = label;
-        this.element.appendChild(this._label);
 
         this._emptyLabel = document.createElement('label');
         this._emptyLabel.className = 'few-shot-cell-empty-label';

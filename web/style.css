@@ -1,54 +1,95 @@
 .few-shot-container {
-    width: 310px;
     display: block;
     margin: auto;
 }
 
-.few-shot-container-train-data {
-    text-align: center;
+.few-shot-section-heading {
+    font-size: 18px;
+    font-weight: 500;
+    display: block;
+    margin-bottom: 15px;
 }
 
-.few-shot-container-train-data .few-shot-cell:nth-child(2) {
-    margin: 0 4px;
+.few-shot-container button {
+    position: absolute;
+    bottom: 0;
+
+    height: 35px;
+    margin: 0 !important;
+
+    background-color: #8e8e9c !important;
+    font-weight: bolder !important;
 }
 
-.few-shot-container-test-and-controls {
-    width: 100%;
-    text-align: center;
-}
-
-.few-shot-container-controls {
+.few-shot-container-train-data, .few-shot-container-test-data {
     position: relative;
-    display: inline-block;
-    height: 100px;
-    width: 100px;
 }
 
-.few-shot-container-controls button {
-    position: absolute !important;
-    width: 92px !important;
-    height: 30px !important;
-    left: 4px !important;
-    min-height: 0 !important;
+@media (min-width: 500px) {
+    .few-shot-container {
+        width: 481px;
+        height: 240px;
+    }
 
-    border: none !important;
+    .few-shot-container::after {
+        content: ' ';
+        font-size: 0;
+        clear: both;
+        display: block;
+    }
 
-    background-color: #65bcd4 !important;
-    color: white !important;
-    font-size: 16px !important;
-    cursor: pointer !important;
+    .few-shot-container-train-data {
+        position: relative;
+        float: left;
+        width: 320px;
+        height: 100%;
+    }
 
-    letter-spacing: 0 !important;
-    text-transform: none !important;
-    border-radius: none !important;
+    .few-shot-container-test-data {
+        position: relative;
+        float: right;
+        width: 100px;
+        height: 100%;
+    }
+
+    .few-shot-separator {
+        float: left;
+        width: 1px;
+        height: 100%;
+        background-color: #ddd;
+        margin: 0 30px;
+    }
 }
 
-.few-shot-container-clear {
-    top: 18px;
-}
+@media (max-width: 500px) {
+    .few-shot-container {
+        width: 320px;
+    }
 
-.few-shot-container-clear-all {
-    top: 52px;
+    .few-shot-container-train-data {
+        float: none;
+        width: 100%;
+        height: 240px;
+    }
+
+    .few-shot-container-test-data {
+        float: none;
+        width: 100%;
+        height: auto;
+    }
+
+    .few-shot-container-test-data button {
+        left: 120px;
+        bottom: 35px;
+    }
+
+    .few-shot-separator {
+        float: none;
+        width: 100%;
+        height: 1px;
+        background-color: #ddd;
+        margin: 20px 0 10px 0;
+    }
 }
 
 .few-shot-cell {
@@ -56,25 +97,15 @@
     position: relative;
     width: 100px;
     height: 100px;
+    margin-right: 10px;
 
     background-color: #f0f0f0;
     border-radius: 3px;
 }
 
-.few-shot-cell-label {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 20px;
-    height: 20px;
-
-    line-height: 20px;
-    text-align: center;
-    font-size: 16px;
-
-    background-color: #5588c0;
-    color: white;
-    border-radius: 3px 0;
+/* TODO: this is a hack! */
+.few-shot-cell:nth-last-of-type(2) {
+    margin-right: 0;
 }
 
 .few-shot-cell-canvas {
@@ -103,9 +134,15 @@
 
 .few-shot-predictions {
     display: block;
-    width: 200px;
-    margin: 5px auto 0 auto;
-    text-align: left;
+    width: 320px;
+    margin-top: 10px;
+}
+
+.few-shot-predictions::after {
+    content: ' ';
+    clear: both;
+    font-size: 0;
+    display: block;
 }
 
 .few-shot-predictions-disabled {
@@ -113,25 +150,24 @@
 }
 
 .few-shot-predictions-row {
-    margin-bottom: 5px;
+    width: 100px;
+    margin-right: 10px;
+    float: left;
 }
 
-.few-shot-predictions-label {
-    display: inline-block;
-    width: 20px;
-    font-size: 16px;
+.few-shot-predictions-row:last-child {
+    margin-right: 0;
 }
 
 .few-shot-predictions-percent-label {
-    margin-left: 10px;
     font-size: 16px;
 }
 
 .few-shot-predictions-bar-container {
     display: inline-block;
 
-    width: 110px;
-    height: 5px;
+    width: 100px;
+    height: 10px;
     margin-bottom: 3px;
 
     background-color: #f0f0f0;
@@ -140,9 +176,13 @@
 .few-shot-predictions-bar {
     width: 0%;
     height: 100%;
-    background-color: #65bcd4;
+    background-color: #8e8e9c;
 }
 
-.few-shot-predictions-disabled .few-shot-predictions-bar {
-    background-color: #707070;
+.few-shot-predictions-row-active .few-shot-predictions-bar {
+    background-color: #a5d591;
+}
+
+.few-shot-predictions-row-active .few-shot-predictions-percent-label {
+    color: #6c9d85;
 }
