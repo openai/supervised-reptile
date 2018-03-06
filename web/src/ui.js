@@ -35,11 +35,11 @@
         this._predictions = new Predictions(NUM_CLASSES);
         this._trainElement.appendChild(this._predictions.element);
 
-        var clearAllButton = document.createElement('button');
-        clearAllButton.className = 'few-shot-container-clear-all';
-        clearAllButton.textContent = 'Erase All';
-        clearAllButton.addEventListener('click', this._clearAll.bind(this));
-        this._trainElement.appendChild(clearAllButton);
+        this._clearAllButton = document.createElement('button');
+        this._clearAllButton.className = 'few-shot-container-clear-all';
+        this._clearAllButton.textContent = 'Edit All';
+        this._clearAllButton.addEventListener('click', this._clearAll.bind(this));
+        this._trainElement.appendChild(this._clearAllButton);
 
         this.element.appendChild(this._trainElement);
     };
@@ -53,11 +53,11 @@
         this._cells.push(testCell);
         this._testElement.appendChild(testCell.element);
 
-        var clearButton = document.createElement('button');
-        clearButton.className = 'few-shot-container-clear';
-        clearButton.textContent = 'Erase';
-        clearButton.addEventListener('click', this._clear.bind(this));
-        this._testElement.appendChild(clearButton);
+        this._clearButton = document.createElement('button');
+        this._clearButton.className = 'few-shot-container-clear';
+        this._clearButton.textContent = 'Edit';
+        this._clearButton.addEventListener('click', this._clear.bind(this));
+        this._testElement.appendChild(this._clearButton);
 
         this.element.appendChild(this._testElement);
     };
@@ -87,6 +87,12 @@
         } else {
             this._predictions.setEnabled(false);
         }
+
+        for (var i = 0; i < this._cells.length; ++i) {
+            this._cells[i].enableInteraction();
+        }
+        this._clearAllButton.textContent = 'Erase All';
+        this._clearButton.textContent = 'Erase';
     };
 
     UI.prototype._gotResult = function(obj) {

@@ -27,11 +27,18 @@
         this._paths = [];
         this._redraw();
 
-        this._registerMouse();
-        if ('ontouchstart' in document.documentElement) {
-            this._registerTouch();
-        }
+        this._enabled = false;
     }
+
+    DrawingCell.prototype.enableInteraction = function() {
+        if (!this._enabled) {
+            this._enabled = true;
+            this._registerMouse();
+            if ('ontouchstart' in document.documentElement) {
+                this._registerTouch();
+            }
+        }
+    };
 
     DrawingCell.prototype.setPaths = function(paths) {
         this._paths = paths;
