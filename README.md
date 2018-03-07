@@ -64,18 +64,18 @@ Here are the commands for comparing different gradient combinations. The `--foml
 # Shared hyper-parameters for all experiments.
 shared="--sgd --seed 0 --inner-batch 25 --learning-rate 0.0003 --meta-step-final 0 --meta-iters 40000 --eval-batch 25 --eval-iters 5 --eval-interval 1"
 
-python run_omniglot.py --inner-iters 1 --train-shots 5 --meta-step 1 --checkpoint g1_ckpt $shared | tee g1.txt
+python run_omniglot.py --inner-iters 1 --train-shots 5 --meta-step 0.25 --checkpoint g1_ckpt $shared | tee g1.txt
 
-python run_omniglot.py --inner-iters 2 --train-shots 10 --meta-step 1 --checkpoint g1_g2_ckpt $shared | tee g1_g2.txt
-python run_omniglot.py --inner-iters 2 --train-shots 10 --meta-step 0.5 --checkpoint half_g1_g2_ckpt $shared | tee half_g1_g2.txt
-python run_omniglot.py --foml --inner-iters 2 --train-shots 10 --meta-step 1 --checkpoint g2_ckpt $shared | tee g2.txt
+python run_omniglot.py --inner-iters 2 --train-shots 10 --meta-step 0.25 --checkpoint g1_g2_ckpt $shared | tee g1_g2.txt
+python run_omniglot.py --inner-iters 2 --train-shots 10 --meta-step 0.125 --checkpoint half_g1_g2_ckpt $shared | tee half_g1_g2.txt
+python run_omniglot.py --foml --inner-iters 2 --train-shots 10 --meta-step 0.25 --checkpoint g2_ckpt $shared | tee g2.txt
 
-python run_omniglot.py --inner-iters 3 --train-shots 15 --meta-step 1 --checkpoint g1_g2_g3_ckpt $shared | tee g1_g2_g3.txt
-python run_omniglot.py --inner-iters 3 --train-shots 15 --meta-step 0.333 --checkpoint third_g1_g2_g3_ckpt $shared | tee third_g1_g2_g3.txt
-python run_omniglot.py --foml --inner-iters 3 --train-shots 15 --meta-step 1 --checkpoint g3_ckpt $shared | tee g3.txt
+python run_omniglot.py --inner-iters 3 --train-shots 15 --meta-step 0.25 --checkpoint g1_g2_g3_ckpt $shared | tee g1_g2_g3.txt
+python run_omniglot.py --inner-iters 3 --train-shots 15 --meta-step 0.08325 --checkpoint third_g1_g2_g3_ckpt $shared | tee third_g1_g2_g3.txt
+python run_omniglot.py --foml --inner-iters 3 --train-shots 15 --meta-step 0.25 --checkpoint g3_ckpt $shared | tee g3.txt
 
-python run_omniglot.py --foml --inner-iters 4 --train-shots 20 --meta-step 1 --checkpoint g4_ckpt $shared | tee g4.txt
-python run_omniglot.py --inner-iters 4 --train-shots 20 --meta-step 1 --checkpoint g1_g2_g3_g4_ckpt $shared | tee g1_g2_g3_g4.txt
-python run_omniglot.py --inner-iters 4 --train-shots 20 --meta-step 0.25 --checkpoint fourth_g1_g2_g3_g4_ckpt $shared | tee fourth_g1_g2_g3_g4.txt
+python run_omniglot.py --foml --inner-iters 4 --train-shots 20 --meta-step 0.25 --checkpoint g4_ckpt $shared | tee g4.txt
+python run_omniglot.py --inner-iters 4 --train-shots 20 --meta-step 0.25 --checkpoint g1_g2_g3_g4_ckpt $shared | tee g1_g2_g3_g4.txt
+python run_omniglot.py --inner-iters 4 --train-shots 20 --meta-step 0.0625 --checkpoint fourth_g1_g2_g3_g4_ckpt $shared | tee fourth_g1_g2_g3_g4.txt
 
 ```
