@@ -15,10 +15,10 @@ import numpy as np
 
 def read_dataset(data_dir):
     """
-    Read the miniImageNet dataset.
+    Read the Mini-ImageNet dataset.
 
     Args:
-      data_dir: directory containing miniImageNet.
+      data_dir: directory containing Mini-ImageNet.
 
     Returns:
       A tuple (train, val, test) of sequences of

@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Fetch the datasets for this model.
+# Fetch Omniglot and Mini-ImageNet.
 #
 
 OMNIGLOT_URL=https://raw.githubusercontent.com/brendenlake/omniglot/master/python
