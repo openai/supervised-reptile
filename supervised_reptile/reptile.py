@@ -105,14 +105,8 @@ class Reptile:
           The number of correctly predicted samples.
             This always ranges from 0 to num_classes.
         """
-        train_set = list(_sample_mini_dataset(dataset, num_classes, num_shots+1))
-        test_set = []
-        for label in range(num_classes):
-            for i, item in enumerate(train_set):
-                if item[1] == label:
-                    del train_set[i]
-                    test_set.append(item)
-                    break
+        train_set, test_set = _split_train_test(
+            _sample_mini_dataset(dataset, num_classes, num_shots+1))
         old_vars = self._full_state.export_variables()
         for batch in _mini_batches(train_set, inner_batch_size, inner_iters):
             inputs, labels = zip(*batch)
@@ -205,3 +199,30 @@ def _mini_batches(samples, batch_size, num_batches):
             batch_count += 1
             if batch_count == num_batches:
                 return
+
+def _split_train_test(samples, test_shots=1):
+    """
+    Split a few-shot task into a train and a test set.
+
+    Args:
+      samples: an iterable of (input, label) pairs.
+      test_shots: the number of examples per class in the
+        test set.
+
+    Returns:
+      A tuple (train, test), where train and test are
+        sequences of (input, label) pairs.
+    """
+    train_set = list(samples)
+    test_set = []
+    labels = set(item[1] for item in train_set)
+    for _ in range(test_shots):
+        for label in labels:
+            for i, item in enumerate(train_set):
+                if item[1] == label:
+                    del train_set[i]
+                    test_set.append(item)
+                    break
+    if len(test_set) < len(labels) * test_shots:
+        raise IndexError('not enough examples of each class for test set')
+    return train_set, test_set
