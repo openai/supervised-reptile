@@ -192,7 +192,9 @@ class FOML(Reptile):
         Generate inner-loop mini-batches for the task.
         """
         if self.tail_shots is None:
-            return _mini_batches(mini_dataset, inner_batch_size, inner_iters)
+            for value in _mini_batches(mini_dataset, inner_batch_size, inner_iters):
+                yield value
+            return
         train, tail = _split_train_test(mini_dataset, test_shots=self.tail_shots)
         for batch in _mini_batches(train, inner_batch_size, inner_iters - 1):
             yield batch
