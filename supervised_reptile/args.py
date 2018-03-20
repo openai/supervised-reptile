@@ -3,6 +3,7 @@ Command-line argument parsing.
 """
 
 import argparse
+from functools import partial
 
 import tensorflow as tf
 
@@ -35,6 +36,8 @@ def argument_parser():
     parser.add_argument('--weight-decay', help='weight decay rate', default=1, type=float)
     parser.add_argument('--transductive', help='evaluate all samples at once', action='store_true')
     parser.add_argument('--foml', help='use FOML instead of Reptile', action='store_true')
+    parser.add_argument('--foml-tail', help='number of shots for the final mini-batch in FOML',
+                        default=None, type=int)
     parser.add_argument('--sgd', help='use vanilla SGD instead of Adam', action='store_true')
     return parser
 
@@ -89,5 +92,5 @@ def evaluate_kwargs(parsed_args):
 
 def _args_reptile(parsed_args):
     if parsed_args.foml:
-        return FOML
+        return partial(FOML, tail_shots=parsed_args.foml_tail)
     return Reptile
