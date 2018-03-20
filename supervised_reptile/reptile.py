@@ -136,7 +136,30 @@ class FOML(Reptile):
     FOML is similar to Reptile, except that you use the
     gradient from the last mini-batch as the update
     direction.
+
+    There are two ways to sample batches for FOML.
+    By default, FOML samples batches just like Reptile,
+    meaning that the final mini-batch may overlap with
+    the previous mini-batches.
+    Alternatively, if tail_shots is specified, then a
+    separate mini-batch is used for the final step.
+    This final mini-batch is guaranteed not to overlap
+    with the training mini-batches.
     """
+    def __init__(self, *args, tail_shots=None, **kwargs):
+        """
+        Create a first-order MAML session.
+
+        Args:
+          args: args for Reptile.
+          tail_shots: if specified, this is the number of
+            examples per class to reserve for the final
+            mini-batch.
+          kwargs: kwargs for Reptile.
+        """
+        super(FOML, self).__init__(*args, **kwargs)
+        self.tail_shots = tail_shots
+
     # pylint: disable=R0913,R0914
     def train_step(self,
                    dataset,
@@ -153,7 +176,7 @@ class FOML(Reptile):
         updates = []
         for _ in range(meta_batch_size):
             mini_dataset = _sample_mini_dataset(dataset, num_classes, num_shots)
-            for batch in _mini_batches(mini_dataset, inner_batch_size, inner_iters):
+            for batch in self._mini_batches(mini_dataset, inner_batch_size, inner_iters):
                 inputs, labels = zip(*batch)
                 last_backup = self._model_state.export_variables()
                 if self._pre_step_op:
@@ -163,6 +186,17 @@ class FOML(Reptile):
             self._model_state.import_variables(old_vars)
         update = average_vars(updates)
         self._model_state.import_variables(add_vars(old_vars, scale_vars(update, meta_step_size)))
+
+    def _mini_batches(self, mini_dataset, inner_batch_size, inner_iters):
+        """
+        Generate inner-loop mini-batches for the task.
+        """
+        if self.tail_shots is None:
+            return _mini_batches(mini_dataset, inner_batch_size, inner_iters)
+        train, tail = _split_train_test(mini_dataset, test_shots=self.tail_shots)
+        for batch in _mini_batches(train, inner_batch_size, inner_iters - 1):
+            yield batch
+        yield tail
 
 def _sample_mini_dataset(dataset, num_classes, num_shots):
     """
