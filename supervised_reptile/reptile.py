@@ -37,6 +37,7 @@ class Reptile:
                    num_shots,
                    inner_batch_size,
                    inner_iters,
+                   replacement,
                    meta_step_size,
                    meta_batch_size):
         """
@@ -54,6 +55,7 @@ class Reptile:
           inner_batch_size: batch size for every inner-loop
             training iteration.
           inner_iters: number of inner-loop iterations.
+          replacement: sample with replacement.
           meta_step_size: interpolation coefficient.
           meta_batch_size: how many inner-loops to run.
         """
@@ -61,7 +63,7 @@ class Reptile:
         new_vars = []
         for _ in range(meta_batch_size):
             mini_dataset = _sample_mini_dataset(dataset, num_classes, num_shots)
-            for batch in _mini_batches(mini_dataset, inner_batch_size, inner_iters):
+            for batch in _mini_batches(mini_dataset, inner_batch_size, inner_iters, replacement):
                 inputs, labels = zip(*batch)
                 if self._pre_step_op:
                     self.session.run(self._pre_step_op)
@@ -80,7 +82,8 @@ class Reptile:
                  num_classes,
                  num_shots,
                  inner_batch_size,
-                 inner_iters):
+                 inner_iters,
+                 replacement):
         """
         Run a single evaluation of the model.
 
@@ -100,6 +103,7 @@ class Reptile:
           inner_batch_size: batch size for every inner-loop
             training iteration.
           inner_iters: number of inner-loop iterations.
+          replacement: sample with replacement.
 
         Returns:
           The number of correctly predicted samples.
@@ -108,7 +112,7 @@ class Reptile:
         train_set, test_set = _split_train_test(
             _sample_mini_dataset(dataset, num_classes, num_shots+1))
         old_vars = self._full_state.export_variables()
-        for batch in _mini_batches(train_set, inner_batch_size, inner_iters):
+        for batch in _mini_batches(train_set, inner_batch_size, inner_iters, replacement):
             inputs, labels = zip(*batch)
             if self._pre_step_op:
                 self.session.run(self._pre_step_op)
@@ -170,13 +174,16 @@ class FOML(Reptile):
                    num_shots,
                    inner_batch_size,
                    inner_iters,
+                   replacement,
                    meta_step_size,
                    meta_batch_size):
         old_vars = self._model_state.export_variables()
         updates = []
         for _ in range(meta_batch_size):
             mini_dataset = _sample_mini_dataset(dataset, num_classes, num_shots)
-            for batch in self._mini_batches(mini_dataset, inner_batch_size, inner_iters):
+            mini_batches = self._mini_batches(mini_dataset, inner_batch_size, inner_iters,
+                                              replacement)
+            for batch in mini_batches:
                 inputs, labels = zip(*batch)
                 last_backup = self._model_state.export_variables()
                 if self._pre_step_op:
@@ -187,16 +194,16 @@ class FOML(Reptile):
         update = average_vars(updates)
         self._model_state.import_variables(add_vars(old_vars, scale_vars(update, meta_step_size)))
 
-    def _mini_batches(self, mini_dataset, inner_batch_size, inner_iters):
+    def _mini_batches(self, mini_dataset, inner_batch_size, inner_iters, replacement):
         """
         Generate inner-loop mini-batches for the task.
         """
         if self.tail_shots is None:
-            for value in _mini_batches(mini_dataset, inner_batch_size, inner_iters):
+            for value in _mini_batches(mini_dataset, inner_batch_size, inner_iters, replacement):
                 yield value
             return
         train, tail = _split_train_test(mini_dataset, test_shots=self.tail_shots)
-        for batch in _mini_batches(train, inner_batch_size, inner_iters - 1):
+        for batch in _mini_batches(train, inner_batch_size, inner_iters - 1, replacement):
             yield batch
         yield tail
 
@@ -213,7 +220,7 @@ def _sample_mini_dataset(dataset, num_classes, num_shots):
         for sample in class_obj.sample(num_shots):
             yield (sample, class_idx)
 
-def _mini_batches(samples, batch_size, num_batches):
+def _mini_batches(samples, batch_size, num_batches, replacement):
     """
     Generate mini-batches from some data.
 
@@ -221,6 +228,10 @@ def _mini_batches(samples, batch_size, num_batches):
       An iterable of sequences of (input, label) pairs,
         where each sequence is a mini-batch.
     """
+    if replacement:
+        for _ in range(num_batches):
+            yield random.sample(samples, batch_size)
+        return
     cur_batch = []
     samples = list(samples)
     batch_count = 0

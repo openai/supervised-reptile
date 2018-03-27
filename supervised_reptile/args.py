@@ -23,6 +23,7 @@ def argument_parser():
     parser.add_argument('--train-shots', help='shots in a training batch', default=0, type=int)
     parser.add_argument('--inner-batch', help='inner batch size', default=5, type=int)
     parser.add_argument('--inner-iters', help='inner iterations', default=20, type=int)
+    parser.add_argument('--replacement', help='sample with replacement', action='store_true')
     parser.add_argument('--learning-rate', help='Adam step size', default=1e-3, type=float)
     parser.add_argument('--meta-step', help='meta-training step size', default=0.1, type=float)
     parser.add_argument('--meta-step-final', help='meta-training step size by the end',
@@ -62,6 +63,7 @@ def train_kwargs(parsed_args):
         'train_shots': (parsed_args.train_shots or None),
         'inner_batch_size': parsed_args.inner_batch,
         'inner_iters': parsed_args.inner_iters,
+        'replacement': parsed_args.replacement,
         'meta_step_size': parsed_args.meta_step,
         'meta_step_size_final': parsed_args.meta_step_final,
         'meta_batch_size': parsed_args.meta_batch,
@@ -84,6 +86,7 @@ def evaluate_kwargs(parsed_args):
         'num_shots': parsed_args.shots,
         'eval_inner_batch_size': parsed_args.eval_batch,
         'eval_inner_iters': parsed_args.eval_iters,
+        'replacement': parsed_args.replacement,
         'weight_decay_rate': parsed_args.weight_decay,
         'num_samples': parsed_args.eval_samples,
         'transductive': parsed_args.transductive,

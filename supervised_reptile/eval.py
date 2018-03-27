@@ -13,6 +13,7 @@ def evaluate(sess,
              num_shots=5,
              eval_inner_batch_size=5,
              eval_inner_iters=50,
+             replacement=False,
              num_samples=10000,
              transductive=False,
              weight_decay_rate=1,
@@ -29,5 +30,5 @@ def evaluate(sess,
                                           model.minimize_op, model.predictions,
                                           num_classes=num_classes, num_shots=num_shots,
                                           inner_batch_size=eval_inner_batch_size,
-                                          inner_iters=eval_inner_iters)
+                                          inner_iters=eval_inner_iters, replacement=replacement)
     return total_correct / (num_samples * num_classes)

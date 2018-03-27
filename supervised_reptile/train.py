@@ -20,6 +20,7 @@ def train(sess,
           num_shots=5,
           inner_batch_size=5,
           inner_iters=20,
+          replacement=False,
           meta_step_size=0.1,
           meta_step_size_final=0.1,
           meta_batch_size=1,
@@ -55,6 +56,7 @@ def train(sess,
         reptile.train_step(train_set, model.input_ph, model.label_ph, model.minimize_op,
                            num_classes=num_classes, num_shots=(train_shots or num_shots),
                            inner_batch_size=inner_batch_size, inner_iters=inner_iters,
+                           replacement=replacement,
                            meta_step_size=cur_meta_step_size, meta_batch_size=meta_batch_size)
         if i % eval_interval == 0:
             accuracies = []
@@ -63,7 +65,7 @@ def train(sess,
                                            model.minimize_op, model.predictions,
                                            num_classes=num_classes, num_shots=num_shots,
                                            inner_batch_size=eval_inner_batch_size,
-                                           inner_iters=eval_inner_iters)
+                                           inner_iters=eval_inner_iters, replacement=replacement)
                 summary = sess.run(merged, feed_dict={accuracy_ph: correct/num_classes})
                 writer.add_summary(summary, i)
                 writer.flush()
