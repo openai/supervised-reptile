@@ -228,12 +228,12 @@ def _mini_batches(samples, batch_size, num_batches, replacement):
       An iterable of sequences of (input, label) pairs,
         where each sequence is a mini-batch.
     """
+    samples = list(samples)
     if replacement:
         for _ in range(num_batches):
             yield random.sample(samples, batch_size)
         return
     cur_batch = []
-    samples = list(samples)
     batch_count = 0
     while True:
         random.shuffle(samples)
