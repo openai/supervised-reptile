@@ -39,8 +39,8 @@ class MiniImageNetModel:
         out = self.input_ph
         for _ in range(4):
             out = tf.layers.conv2d(out, 32, 3, padding='same')
-            out = tf.layers.max_pooling2d(out, 2, 2, padding='same')
             out = tf.layers.batch_normalization(out, training=True)
+            out = tf.layers.max_pooling2d(out, 2, 2, padding='same')
             out = tf.nn.relu(out)
         out = tf.reshape(out, (-1, int(np.prod(out.get_shape()[1:]))))
         self.logits = tf.layers.dense(out, num_classes)
