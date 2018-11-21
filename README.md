@@ -1,3 +1,5 @@
+**Status:** Archive (code is provided as-is, no updates expected)
+
 # supervised-reptile
 
 [Reptile](https://arxiv.org/abs/1803.02999) training code for [Omniglot](https://github.com/brendenlake/omniglot) and [Mini-ImageNet](https://openreview.net/pdf?id=rJY0-Kcll).
