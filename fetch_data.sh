@@ -3,7 +3,7 @@
 # Fetch Omniglot and Mini-ImageNet.
 #
 
-OMNIGLOT_URL=https://raw.githubusercontent.com/brendenlake/omniglot/master/python
+OMNIGLOT_URL=https://github.com/brendenlake/omniglot/raw/master/python
 IMAGENET_URL=http://www.image-net.org/challenges/LSVRC/2012/nnoupb/ILSVRC2012_img_train.tar
 
 set -e
@@ -19,7 +19,7 @@ if [ ! -d data/omniglot ]; then
     mkdir tmp/omniglot
     for name in images_background images_evaluation; do
         echo "Fetching omniglot/$name ..."
-        curl -s "$OMNIGLOT_URL/$name.zip" > "tmp/$name.zip"
+        curl -L -s "$OMNIGLOT_URL/$name.zip" > "tmp/$name.zip"
         echo "Extracting omniglot/$name ..."
         unzip -q "tmp/$name.zip" -d tmp
         rm "tmp/$name.zip"
